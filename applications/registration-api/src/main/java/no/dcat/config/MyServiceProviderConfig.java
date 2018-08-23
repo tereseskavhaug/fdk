@@ -58,8 +58,6 @@ public class MyServiceProviderConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/assets/**").permitAll()
                 .antMatchers("/loggetut").permitAll()
                 .antMatchers("/loginerror").permitAll()
-                .antMatchers("/login").permitAll()
-                .antMatchers("/logout").permitAll()
                 .requestMatchers(saml().endpointsMatcher()).permitAll()
                 .and()
             .authorizeRequests()
