@@ -11,7 +11,7 @@ import org.springframework.security.config.annotation.method.configuration.Globa
  * Created by dask on 02.06.2017.
  */
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(securedEnabled = true)
 public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
 
     private final CatalogPermissionEvaluator catalogPermissionEvaluator;

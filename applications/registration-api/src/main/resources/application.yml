@@ -90,10 +90,10 @@ spring:
 logging:
   level.: ERROR
   level.no.brreg: INFO
-  level.no.dcat: INFO
-  level.org.springframework: INFO
+  level.no.dcat: DEBUG
+  level.org.springframework: DEBUG
   level.org.springframework.web: ERROR
-  level.org.opensaml: INFO
+  level.org.opensaml: DEBUG
 health:
   config:
     enabled: false

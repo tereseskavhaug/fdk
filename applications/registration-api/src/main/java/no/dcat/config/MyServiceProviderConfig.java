@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -72,7 +71,7 @@ public class MyServiceProviderConfig extends WebSecurityConfigurerAdapter {
         saml().serviceProvider().authenticationProvider().userDetailsService(fdkSamlUserDetailsService);
 
         saml().serviceProvider().sso().successHandler(loginSuccessHandler());
-        saml().serviceProvider().logout().successHandler(logoutSuccesHandles());
+        saml().serviceProvider().logout().successHandler(logoutSuccesHandler());
 
     }
 
@@ -117,7 +116,7 @@ public class MyServiceProviderConfig extends WebSecurityConfigurerAdapter {
         return handler;
     }
 
-    private LogoutSuccessHandler logoutSuccesHandles() {
+    private LogoutSuccessHandler logoutSuccesHandler() {
         SimpleUrlLogoutSuccessHandler handler = new SimpleUrlLogoutSuccessHandler();
         handler.setRedirectStrategy((request, response, url) -> {
             logger.debug("logoutSuccessRedirect: {}", frontendBaseUrl);
