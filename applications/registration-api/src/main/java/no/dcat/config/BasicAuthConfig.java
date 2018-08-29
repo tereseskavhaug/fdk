@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -27,18 +26,16 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
-import static no.dcat.config.Roles.ROLE_USER;
-
 /**
  * Created by bjg on 19.06.2017.
  * <p>
  * Configures basic auth for use in develop profile
  */
-@Configuration
+
 @Profile({"prod-localauth", "docker", "develop", "unit-integration"})
-@EnableWebSecurity
+@Configuration
 public class BasicAuthConfig extends WebSecurityConfigurerAdapter {
-    private static final Logger logger = LoggerFactory.getLogger(AuthorizationService.class);
+    private static final Logger logger = LoggerFactory.getLogger(BasicAuthConfig.class);
 
     @Bean
     public AuthenticationSuccessHandler loginSuccessHandler() {
@@ -76,7 +73,6 @@ public class BasicAuthConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     EntityNameService entityNameService;
 
-
     @Autowired
     UserDetailsService basicUserDetailsService;
 
@@ -95,7 +91,7 @@ public class BasicAuthConfig extends WebSecurityConfigurerAdapter {
             } catch (AuthorizationServiceException | RuntimeException e) {
                 logger.error("Feil ved autorisasjon i Altinn {}", e);
             } finally {
-                authorities.add(new SimpleGrantedAuthority(ROLE_USER));
+                authorities.add(new SimpleGrantedAuthority(Roles.ROLE_USER));
             }
             return User.withDefaultPasswordEncoder().username(personnummer).password("password01").authorities(authorities).build();
         };
@@ -111,12 +107,11 @@ public class BasicAuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-
+        // @formatter:off
         http
-                //.httpBasic()
-                //     .and()
-                .csrf().disable()
-                .authorizeRequests()
+            .csrf()
+                .disable()
+            .authorizeRequests()
                 .antMatchers("/*.js").permitAll()
                 .antMatchers("/*.woff2").permitAll()
                 .antMatchers("/*.woff").permitAll()
@@ -130,29 +125,31 @@ public class BasicAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET,"/catalogs/**").permitAll()
 
                 .and()
-                .authorizeRequests()
+            .authorizeRequests()
 
                 .anyRequest().authenticated()
                 .and()
-                .formLogin()
+            .formLogin()
                 // .loginPage("/login")
                 .permitAll()
                 .successHandler(loginSuccessHandler())
                 .failureUrl("/loginerror")
                 .and()
 
-                .logout()
+            .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessHandler(logoutSuccessHandler())
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .permitAll()
                 .and()
-                .exceptionHandling()
+            .exceptionHandling()
                 .accessDeniedPage("/loginerror");
 
+        // @formatter:on
 
     }
 
-
 }
+
+

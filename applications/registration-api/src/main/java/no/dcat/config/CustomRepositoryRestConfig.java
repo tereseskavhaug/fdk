@@ -13,4 +13,5 @@ public class CustomRepositoryRestConfig extends RepositoryRestConfigurerAdapter 
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
         config.exposeIdsFor(Catalog.class, Dataset.class);
     }
+
 }
