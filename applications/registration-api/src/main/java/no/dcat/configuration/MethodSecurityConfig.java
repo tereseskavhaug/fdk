@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.method.configuration.Globa
 /**
  * Created by dask on 02.06.2017.
  */
-
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
     private static Logger logger = LoggerFactory.getLogger(MethodSecurityConfig.class);
