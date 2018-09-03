@@ -49,6 +49,8 @@ saml:
         scheme: https
         server-name: ${registrationApi_ServerName:localhost}
         server-port: ${registrationApi_ServerPort:8099}
+    logout:
+      default-target-url: /
 
 ---
 spring:
@@ -64,9 +66,6 @@ logging:
   level.org.springframework: INFO
   level.org.springframework.web: ERROR
   level.org.opensaml: INFO
-health:
-  config:
-    enabled: false
 application:
   authentication:
     includedOrgforms: ADOS,FKF,FYLK,IKS,KF,KIRK,KOMM,ORGL,SF,STAT,SÆR
@@ -90,14 +89,10 @@ spring:
       clusterName: ${FDK_ES_CLUSTERNAME:elasticsearch}
 logging:
   level.: ERROR
-  level.no.brreg: INFO
   level.no.dcat: DEBUG
-  level.org.springframework: INFO
-  level.org.springframework.web: ERROR
-  level.org.opensaml: DEBUG
-health:
-  config:
-    enabled: false
+  level.org.springframework: WARN
+  level.org.springframework.web: WARN
+  level.org.opensaml: INFO
 management:
   server:
     port: 8181
