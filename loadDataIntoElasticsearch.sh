@@ -19,9 +19,9 @@ function startLoad {
         targetElasticUrl=http://localhost:9200
     fi
 
-    if [ "$environment" == "st1" ]
+    if [ "$environment" == "st1" ] || [ "$environment" == "st2" ]
     then
-        targetElasticUrl=http://es01-fdk-02-st1.regsys-nprd.brreg.no:9200
+        targetElasticUrl=http://es01-fdk-02-${environment}.regsys-nprd.brreg.no:9200
     fi
 
     echo "Source files to load            : ${source}"
@@ -36,7 +36,7 @@ function startLoad {
     loadDcat
     loadScat
     loadRegister
-    loadHarvest
+    #loadHarvest
 
     ENDTIME=`date "+%Y-%m-%dT%H_%M_%S"`
 
@@ -44,6 +44,10 @@ function startLoad {
 }
 
 function loadHarvest {
+
+    echo "******************"
+    echo "HARVEST"
+    echo "******************"
 
     curl -XDELETE ${targetElasticUrl}/harvest
 
@@ -61,6 +65,10 @@ function loadHarvest {
 
 
 function loadRegister {
+    echo "******************"
+    echo "REGISTER"
+    echo "******************"
+
 
     curl -XDELETE ${targetElasticUrl}/register
 
@@ -68,7 +76,25 @@ function loadRegister {
 
 }
 
+function loadAcat {
+    echo "******************"
+    echo "ACAT"
+    echo "******************"
+
+    curl -XDELETE ${targetElasticUrl}/acat
+
+    acatMapping=`cat applications/api-cat/src/main/resources/apispec.mapping.json`
+    acatMetadata="{ \"mappings\": ${acatMapping} }"
+
+    curl -XPUT ${targetElasticUrl}/acat -d "${acatMetadata}"
+    elasticdump --bulk=true --input=${source}_acat.json --output=${targetElasticUrl}/acat --type=data
+
+}
+
 function loadScat {
+    echo "******************"
+    echo "SCAT"
+    echo "******************"
 
     curl -XDELETE ${targetElasticUrl}/scat
 
@@ -81,6 +107,10 @@ function loadScat {
 }
 
 function loadDcat {
+    echo "******************"
+    echo "DCAT"
+    echo "******************"
+
     echo "Delete dcat index"
     curl -XDELETE ${targetElasticUrl}/dcat
 
