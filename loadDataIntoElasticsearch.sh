@@ -87,6 +87,7 @@ function loadAcat {
     acatMetadata="{ \"mappings\": ${acatMapping} }"
 
     curl -XPUT ${targetElasticUrl}/acat -d "${acatMetadata}"
+
     elasticdump --bulk=true --input=${source}_acat.json --output=${targetElasticUrl}/acat --type=data
 
 }
