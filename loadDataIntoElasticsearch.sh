@@ -14,6 +14,11 @@ function startLoad {
         targetElasticUrl=https://elasticsearch-fellesdatakatalog-${environment}.paas.brreg.no
     fi
 
+    if [ "$environment" == "ppe5" ]
+    then
+        targetElasticUrl=http://es01-fdk-01-prd.regsys-prd.brreg.no:9200
+    fi
+
     if [ "$environment" == "localhost" ]
     then
         targetElasticUrl=http://localhost:9200
@@ -33,9 +38,11 @@ function startLoad {
 
     dcatSetting=`cat libraries/datastore/src/main/resources/dcat_settings.json`
 
+
     loadDcat
     loadScat
     loadRegister
+    loadAcat
     #loadHarvest
 
     ENDTIME=`date "+%Y-%m-%dT%H_%M_%S"`
