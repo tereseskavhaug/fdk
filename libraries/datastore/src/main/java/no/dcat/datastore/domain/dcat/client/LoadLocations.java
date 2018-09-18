@@ -4,7 +4,7 @@ import no.dcat.shared.LocationUri;
 import no.dcat.shared.SkosCode;
 import no.dcat.datastore.domain.dcat.builders.AbstractBuilder;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.NodeIterator;
+import org.apache.jena.rdf.model.ResIterator;
 import org.apache.jena.vocabulary.DCTerms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,14 +19,14 @@ import java.util.stream.Collectors;
  */
 public class LoadLocations {
 
-    private final String themesHostname;
+    private final String referenceDataUrl;
     private final String httpUsername;
     private final String httpPassword;
 
     Map<String, SkosCode> locations = new HashMap<>();
 
-    public LoadLocations(String themesHostname, String httpUsername, String httpPassword) {
-        this.themesHostname = themesHostname;
+    public LoadLocations(String referenceDataUrl, String httpUsername, String httpPassword) {
+        this.referenceDataUrl = referenceDataUrl;
         this.httpUsername = httpUsername;
         this.httpPassword = httpPassword;
     }
@@ -40,11 +40,14 @@ public class LoadLocations {
     // for testing
     public LoadLocations(Map<String, SkosCode> locations) {
         this.locations = locations;
-        themesHostname = null;
+        referenceDataUrl = null;
         httpPassword = null;
         httpUsername = null;
     }
 
+    public SkosCode getLocation(String uri) {
+        return locations.get(uri);
+    }
 
     /**
      * Extracts all location-uris from the model and adds it to the map of locations.
@@ -55,25 +58,35 @@ public class LoadLocations {
      * @param model
      * @return
      */
-    public void addLocationsToThemes(Model model) {
+    public void addLocationsToThemes(Model model, Map<String, SkosCode> existingLocationCodes) {
 
         BasicAuthRestTemplate template = new BasicAuthRestTemplate(httpUsername, httpPassword);
 
-        NodeIterator nodeIterator = model.listObjectsOfProperty(DCTerms.spatial);
-        nodeIterator.forEachRemaining(node -> {
-            String uri = AbstractBuilder.removeDefaultBaseUri(model, node.asResource().getURI());
+        ResIterator resIterator = model.listResourcesWithProperty(DCTerms.spatial);
+        resIterator.forEachRemaining(datasetResource -> {
+            datasetResource.listProperties(DCTerms.spatial).forEachRemaining(spatial -> {
+                String uri = AbstractBuilder.removeDefaultBaseUri(model, spatial.getObject().asResource().getURI());
 
-            LocationUri locationUri = new LocationUri(uri);
+                if (uri != null && uri.startsWith("http")) {
+                    if (existingLocationCodes == null || !existingLocationCodes.containsKey(uri)) {
 
-            try {
-                SkosCode skosCode = template.postForObject(themesHostname + "/locations/", locationUri, SkosCode.class);
-                locations.put(skosCode.getUri(), skosCode);
-            } catch (Exception e) {
-                logger.error("Error posting location [{}] to reference-data service. Reason {}", locationUri.getUri(), e.getLocalizedMessage());
-            }
+                        postLocationToReferenceData(template, uri);
+                    }
+                }
+            });
         });
+    }
 
+    public void postLocationToReferenceData(BasicAuthRestTemplate template, String uri) {
+        LocationUri locationUri = new LocationUri(uri);
 
+        try {
+            SkosCode skosCode = template.postForObject(referenceDataUrl + "/locations/", locationUri, SkosCode.class);
+            locations.put(skosCode.getUri(), skosCode);
+            logger.info("Posting location to reference-data: {}", skosCode.toString());
+        } catch (Exception e) {
+            logger.error("Error posting location [{}] to reference-data service. Reason {}", locationUri.getUri(), e.getLocalizedMessage());
+        }
     }
 
 

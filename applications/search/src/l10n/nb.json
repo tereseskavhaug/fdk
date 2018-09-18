@@ -1,4 +1,26 @@
 {
+  "apiLabel": "API",
+  "description": "Beskrivelse",
+  "showFullDescription": "Vis hele beskrivelsen",
+  "showLess": "Vis mindre",
+  "objective": "Formål",
+  "showFullObjective": "Vis hele formålet",
+  "format": "Format",
+  "datasetReferences": "Tilknyttede datasettbeskrivelser",
+  "apiInfo": "Bruk av API-et",
+  "accessLevel": "Tilgangsnivå",
+  "contactInfo": "Kontaktinformasjon",
+  "contactPoint": "Kontaktpunkt",
+  "documentation": "Dokumentasjon",
+  "specification": "Spesifikasjon",
+  "email": "E-post",
+  "phone": "Telefon",
+  "close": "Lukk",
+  "filter": "Filter",
+  "public": "Offentlig",
+  "restricted": "Begrenset offentlighet",
+  "non_public": "Unntatt offentlighet",
+  "unknown": "Ukjent",
   "app": {
     "title": "Felles Datakatalog",
     "titleSub": "Oversikt over datasett fra virksomheter i Norge.",
@@ -63,9 +85,9 @@
     "nosearch.summary":"Søk blant",
     "nosearch.descriptions":"datasettbeskrivelser",
     "datasetTab": "Datasett",
+    "apiTab": "Api",
     "termTab": "Begrep",
-    "nosearch.concepts":"begreper",
-    "nosearch.descriptions":"datasett beskrivelser"
+    "nosearch.concepts":"begreper"
   },
   "hitstats": {
     "nosearch": {
@@ -80,7 +102,9 @@
     "noHits": "Søket ga dessverre ingen treff",
     "concepts": "begrep",
     "and": "og",
-    "but": "men"
+    "but": "men",
+    "apis": "API-er",
+    "apiHits": "treff i API-er"
   },
   "facet": {
     "organisation":"Virksomhet",
@@ -99,7 +123,10 @@
       "KOMMUNE": "Kommune",
       "PRIVAT": "Privat",
       "ANNET": "Annet"
-    }
+    },
+    "provenance": "Opphav",
+    "provider": "Tilbyder",
+    "format": "Format"
   },
   "result": {
     "dataset":"Datasett",
@@ -125,24 +152,24 @@
   },
   "search_hit": {
     "owned": "Eies av",
-    "public": "Offentlig",
-    "restricted": "Begrenset offentlighet",
-    "ukjent": "Ukjent",
-    "non_public": "Unntatt offentlighet",
     "sample": "Eksempeldata tilgjengelig",
-    "NationalBuildingBlock": "Nasjonal felleskomponent"
+    "NationalBuildingBlock": "Nasjonal felleskomponent",
+    "bruker": "Brukerinnsamlede data",
+    "nasjonal": "Nasjonal felleskomponent",
+    "tredjepart": "Tredjepart",
+    "vedtak": "Vedtak"
   },
   "dataset": {
     "accessRight": "Datasettet er",
     "title": "Datasett",
     "type": "Type",
     "firstHarvested": "Publisert i Felles datakatalog",
+    "lastChanged": "Sist endret i Felles datakatalog",
     "conformsTo": "Innholdsstandard",
     "informationModel": "Informasjonsmodell",
     "informationModelDefaultText": "Informasjonsmodell",
     "distribution": {
       "title": "Distribusjon",
-      "description": "Beskrivelse",
       "format": "Tilgjengelige format",
       "accessUrl": "TilgangsURL",
       "license": "Forutsetning for bruk av datasettet",
@@ -198,7 +225,10 @@
       "authorityCode": {
         "public": "Offentlig",
         "restricted": "Begrenset offentlighet",
-        "nonPublic": "Unntatt offentlighet"
+        "nonPublic": "Unntatt offentlighet",
+        "publicDetailsLabel": "Datasettet er offentlig",
+        "restrictedDetailsLabel": "Datasettet har begrenset offentlighet",
+        "nonPublicDetailsLabel": "Datasettet er unntatt offentlighet"
       }
     },
     "sample": "Eksempeldata"
@@ -215,6 +245,7 @@
     "inScheme": "Fagområde / bruksområde",
     "source": "Kilde",
     "note": "Beskrivelse",
+    "compare": "Sammenligning",
     "hideCompare": "Skjul sammenligning",
     "openCompare": "Vis sammenligning",
     "remove": "Fjern begrep",
@@ -245,9 +276,26 @@
     "withoutDistributions": "Offentlige datasett uten distribusjoner",
     "searchPublisher": "Velg virksomhet",
     "searchPublisherPlaceholder": "Søk på virksomhetsnavn...",
-    "typeToSearch": "Skriv for å søke"
+    "typeToSearch": "Skriv for å søke",
+    "openData":"Åpne data",
+    "catalogs":"Kataloger"
   },
   "registration": {
     "title": "Kom i gang med registrering av datasett"
+  },
+  "api": {
+    "accessRight": {
+      "public": "API-et er åpent",
+      "restricted": "API-et har begrenset offentlighet",
+      "nonPublic": "API-et er unntatt offentlighet",
+      "unknown": "Ukjent tilgang"
+    },
+    "endpoints": {
+      "operations": "Operasjoner",
+      "operation": "Operasjon",
+      "description": "Beskrivelse"
+    },
+    "provider": "Tilbyder:",
+    "linkDatasetReference": "Lenke til datasettreferanse"
   }
 }

@@ -10,6 +10,7 @@ import no.dcat.model.Dataset;
 import no.dcat.service.CatalogRepository;
 import no.dcat.service.DatasetRepository;
 import no.dcat.datastore.domain.dcat.smoke.TestCompleteCatalog;
+import no.dcat.shared.testcategories.IntegrationTest;
 import org.apache.commons.collections.map.HashedMap;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -17,6 +18,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @AutoConfigureMockMvc
+@Category(IntegrationTest.class)
 public class DatasetControllerIT {
     private static Logger logger = LoggerFactory.getLogger(DatasetControllerIT.class);
 
@@ -119,6 +122,57 @@ public class DatasetControllerIT {
 
     }
 
+
+    @Test
+    @WithUserDetails("03096000854")
+    public void listDatasetsShouldWork() throws Exception {
+
+        //setup test data
+        String catalogId = "910244132";
+        String datasetId = createCatalogAndSimpleDataset(catalogId);
+
+
+        //get all datasets in catalog
+        mockMvc
+                .perform(
+                        MockMvcRequestBuilders
+                                .get("/catalogs/" + catalogId + "/datasets")
+                                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.datasets[*].title.nb").value("Test-tittel"))
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
+    @WithUserDetails("03096000854")
+    public void putDatasetShouldWork() throws Exception {
+
+        //setup test data
+        String catalogId = "910244132";
+        String datasetId = createCatalogAndSimpleDataset(catalogId);
+
+        //create a modified dataset to replace the existing one
+        Dataset dataset = new Dataset(datasetId);
+
+        Map<String, String> languageTitle = new HashMap<>();
+        languageTitle.put("nb", "Oppdatert tittel");
+        dataset.setTitle(languageTitle);
+
+        dataset.setCatalogId(catalogId);
+
+
+        //save the new dataset in place of the old one
+        mockMvc
+                .perform(
+                        MockMvcRequestBuilders
+                                .put("/catalogs/" + catalogId + "/datasets/" + datasetId)
+                                .content(asJsonString(dataset))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title.nb").value("Oppdatert tittel"))
+                .andExpect(status().isOk());
+    }
 
     @Test
     @WithUserDetails("03096000854")
@@ -250,6 +304,26 @@ public class DatasetControllerIT {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
 
+    }
+
+
+    @Test
+    @WithUserDetails("03096000854")
+    public void deleteDatasetsShouldWork() throws Exception {
+
+        //setup test data
+        String catalogId = "910244132";
+        String datasetId = createCatalogAndSimpleDataset(catalogId);
+
+
+        //delete dataset
+        mockMvc
+                .perform(
+                        MockMvcRequestBuilders
+                                .delete("/catalogs/" + catalogId + "/datasets/" + datasetId)
+                                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
 

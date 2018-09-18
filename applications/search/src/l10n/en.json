@@ -1,4 +1,26 @@
 {
+  "apiLabel": "API",
+  "description": "Description",
+  "showFullDescription": "Show the full description",
+  "showLess": "Show less",
+  "objective": "Objective",
+  "showFullObjective": "Show the full objective",
+  "format": "Format",
+  "datasetReferences": "Dataset references",
+  "apiInfo": "Use of API",
+  "accessLevel": "Accesslevel",
+  "contactInfo": "Contact information",
+  "contactPoint": "Contact point",
+  "documentation": "Documentation",
+  "specification": "Specification",
+  "email": "Email",
+  "phone": "Phone",
+  "close": "Close",
+  "filter": "Filter",
+  "public": "Public",
+  "restricted": "Restricted",
+  "non_public": "Non public",
+  "unknown": "Unknown",
   "app": {
     "title": "The National Data Directory",
     "titleSub": "Datasets from publishers in Norway.",
@@ -63,9 +85,9 @@
     "nosearch.summary":"Søk blant",
     "nosearch.descriptions":"datasettbeskrivelser",
     "datasetTab": "Dataset",
+    "apiTab": "Api",
     "termTab": "Concepts",
-    "nosearch.concepts":"begreper",
-    "nosearch.descriptions":"datasett beskrivelser"
+    "nosearch.concepts":"begreper"
   },
   "hitstats": {
     "nosearch": {
@@ -73,14 +95,16 @@
       "descriptions": "dataset descriptions"
     },
     "search": "Search gave",
-    "datasetHits": "hits among datasets",
+    "datasetHits": "hit(s) among datasets",
     "datasetNoHits": "no hits among datasets",
-    "conceptHits": "hits among concepts",
+    "conceptHits": "hit(s) among concepts",
     "conceptNoHits": "no hits among concepts",
     "noHits": "Sorry, no hits",
     "concepts": "concepts",
     "and": "and",
-    "but": "but"
+    "but": "but",
+    "apis": "APIs",
+    "apiHits": "hit(s) among APIs"
   },
   "facet": {
     "organisation":"Organization",
@@ -99,7 +123,11 @@
       "KOMMUNE": "Municipality",
       "PRIVAT": "Private",
       "ANNET": "Other"
-    }
+    },
+    "provenance": "Provenance"
+  ,
+    "provider": "Provider",
+    "format": "Format"
   },
   "result": {
     "dataset":"Dataset",
@@ -125,24 +153,24 @@
   },
   "search_hit": {
     "owned": "Owned by",
-    "public": "Public",
-    "restricted": "Restricted",
-    "ukjent": "Unknown",
-    "non_public": "Non public",
     "sample": "Sample data are available",
-    "NationalBuildingBlock": "National Building Block"
+    "NationalBuildingBlock": "National Building Block",
+    "bruker": "User collected data",
+    "nasjonal": "National Building Block",
+    "tredjepart": "Third party",
+    "vedtak": "Decision"
   },
   "dataset": {
     "accessRight": "Dataset is",
     "title": "Dataset",
     "type": "Type",
     "firstHarvested": "Published in The National Data Directory",
+    "lastChanged": "Last changed in The National Data Directory",
     "conformsTo": "Conforms to",
     "informationModel": "Information model",
     "informationModelDefaultText": "Information model",
     "distribution": {
       "title": "Distribution",
-      "description": "Description",
       "format": "Format",
       "accessUrl": "AccessURL",
       "license": "License",
@@ -198,7 +226,10 @@
       "authorityCode": {
         "public": "Public",
         "restricted": "Restricted",
-        "nonPublic": "Non public"
+        "nonPublic": "Non public",
+        "publicDetailsLabel": "Dataset is public",
+        "restrictedDetailsLabel": "Dataset is restricted",
+        "nonPublicDetailsLabel": "Dataset is non public"
       }
     },
     "sample": "Sample data"
@@ -215,6 +246,7 @@
     "inScheme": "Domain / application",
     "source": "Source",
     "note": "Description",
+    "compare": "Comparison",
     "hideCompare": "Hide comparison",
     "openCompare": "Show comparison",
     "remove": "Remove concept",
@@ -245,9 +277,26 @@
     "withoutDistributions": "Public datasets without distributions",
     "searchPublisher": "Choose publisher",
     "searchPublisherPlaceholder": "Search publisher...",
-    "typeToSearch": "Type to search"
+    "typeToSearch": "Type to search",
+    "openData":"Open data",
+    "catalogs":"Catalogs"
   },
   "registration": {
     "title": "Registration (only in Norwegian)"
+  },
+  "api": {
+    "accessRight": {
+      "public": "API that are public",
+      "restricted": "API with restricted access",
+      "nonPublic": "API that are not public",
+      "unknown": "Unknown accesslevel"
+    },
+    "endpoints": {
+      "operations": "Operations",
+      "operation": "Operation",
+      "description": "Description"
+    },
+    "provider": "Provider:",
+    "linkDatasetReference": "Link to dataset reference"
   }
 }

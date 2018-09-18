@@ -1,0 +1,167 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render ResultsTabs with "Concepts" active correctly 1`] = `
+<div
+  className="row"
+>
+  <div
+    className="col-12 col-lg-8 offset-lg-4"
+  >
+    <ul
+      className="search-results-tabs d-flex align-items-center"
+    >
+      <li
+        className="d-flex justify-content-center"
+      >
+        <Link
+          aria-label="Link til side for datasett:"
+          replace={false}
+          to={
+            Object {
+              "pathname": "/",
+              "search": "?",
+            }
+          }
+        >
+          Dataset
+          <span>
+             (
+            985
+            )
+          </span>
+        </Link>
+      </li>
+      <FeatureToggle
+        featureName="API"
+        showOnlyWhenDisabled={false}
+      >
+        <li
+          className="d-flex justify-content-center beta"
+        >
+          <Link
+            aria-label="Link til side for api:"
+            replace={false}
+            to={
+              Object {
+                "pathname": "/apis",
+                "search": "?",
+              }
+            }
+          >
+            Api
+            <span>
+               (
+              4
+              )
+            </span>
+          </Link>
+        </li>
+      </FeatureToggle>
+      <li
+        className="d-flex justify-content-center beta li-active"
+      >
+        <Link
+          aria-label="Link til side for begrep:"
+          replace={false}
+          to={
+            Object {
+              "pathname": "/concepts",
+              "search": "?",
+            }
+          }
+        >
+          Concepts
+          <span>
+             (
+            1
+            )
+          </span>
+        </Link>
+      </li>
+    </ul>
+  </div>
+</div>
+`;
+
+exports[`should render ResultsTabs with "Dataset" active correctly 1`] = `
+<div
+  className="row"
+>
+  <div
+    className="col-12 col-lg-8 offset-lg-4"
+  >
+    <ul
+      className="search-results-tabs d-flex align-items-center"
+    >
+      <li
+        className="d-flex justify-content-center li-active"
+      >
+        <Link
+          aria-label="Link til side for datasett:"
+          replace={false}
+          to={
+            Object {
+              "pathname": "/",
+              "search": "?",
+            }
+          }
+        >
+          Dataset
+          <span>
+             (
+            985
+            )
+          </span>
+        </Link>
+      </li>
+      <FeatureToggle
+        featureName="API"
+        showOnlyWhenDisabled={false}
+      >
+        <li
+          className="d-flex justify-content-center beta"
+        >
+          <Link
+            aria-label="Link til side for api:"
+            replace={false}
+            to={
+              Object {
+                "pathname": "/apis",
+                "search": "?",
+              }
+            }
+          >
+            Api
+            <span>
+               (
+              4
+              )
+            </span>
+          </Link>
+        </li>
+      </FeatureToggle>
+      <li
+        className="d-flex justify-content-center beta"
+      >
+        <Link
+          aria-label="Link til side for begrep:"
+          replace={false}
+          to={
+            Object {
+              "pathname": "/concepts",
+              "search": "?",
+            }
+          }
+        >
+          Concepts
+          <span>
+             (
+            1
+            )
+          </span>
+        </Link>
+      </li>
+    </ul>
+  </div>
+</div>
+`;

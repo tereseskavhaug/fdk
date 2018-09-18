@@ -1,13 +1,14 @@
 package no.dcat.datastore.domain.dcat;
 
+import no.dcat.datastore.domain.DcatSource;
 import no.dcat.datastore.domain.dcat.builders.DatasetBuilder;
+import no.dcat.datastore.domain.dcat.vocabulary.DCAT;
 import no.dcat.shared.Contact;
 import no.dcat.shared.Dataset;
 import no.dcat.shared.SkosCode;
 import no.dcat.shared.Subject;
 import no.dcat.shared.Types;
-import no.dcat.datastore.domain.DcatSource;
-import no.dcat.datastore.domain.dcat.vocabulary.DCAT;
+import no.dcat.shared.testcategories.UnitTest;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.ResIterator;
@@ -18,18 +19,25 @@ import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by nodavsko on 01.11.2016.
  */
 
+@Category(UnitTest.class)
 public class DatasetTest {
 
     static private Logger logger = LoggerFactory.getLogger(DatasetTest.class);
@@ -70,15 +78,19 @@ public class DatasetTest {
     @Test
     public void publisherExists() {
         no.dcat.shared.Publisher actual = data.getPublisher();
+
         Publisher expected = new Publisher();
         expected.setUri("http://data.brreg.no/enhetsregisteret/enhet/974760673");
         expected.setName("Brønnøysundregistrene");
+        expected.setPrefLabel(new HashMap<>());
+        expected.getPrefLabel().put("no", "Brønnøysundregistrene");
 
         logger.debug(actual.getUri());
         logger.debug(actual.getName());
 
         Assert.assertEquals("Expects uri", expected.getUri(), actual.getUri());
         Assert.assertEquals("Expects name", expected.getName(), actual.getName());
+        //Assert.assertEquals("Expects prefLabel", expected.getPrefLabel().get("no"), actual.getPrefLabel().get("no"));
     }
 
     @Test

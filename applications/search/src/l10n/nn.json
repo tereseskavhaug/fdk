@@ -1,16 +1,38 @@
 {
+  "apiLabel": "API",
+  "description": "Skildring",
+  "showFullDescription": "Vis heile skildringa",
+  "showLess": "Vis mindre",
+  "objective": "Formål",
+  "showFullObjective": "Vis heile formålet",
+  "format": "Format",
+  "datasetReferences": "Tilknytta datasettskildringar",
+  "apiInfo": "Bruk av API",
+  "accessLevel": "Tilgangsnivå",
+  "contactInfo": "Kontaktinformasjon",
+  "contactPoint": "Kontaktpunkt",
+  "documentation": "Dokumentasjon",
+  "specification": "Spesifikasjon",
+  "email": "E-mail",
+  "phone": "Telefon",
+  "close": "Lukk",
+  "filter": "Filter",
+  "public": "Offentleg",
+  "restricted": "Begrensa offentlegheit",
+  "non_public": "Unntatt offentlegheit",
+  "unknown": "Ukjend",
   "app": {
     "title": "Felles Datakatalog",
     "titleSub": "Oversikt over datasett frå verksemder i Noreg.",
     "publisher": "Velg ut frå verksemd",
     "menu": "Meny",
-    "readMore": "Les mer om "
+    "readMore": "Les meir om "
   },
   "beta": {
     "header": "Dette er ein beta-versjon. ",
     "first": "Gi oss gjerne ",
-    "second": "tilbakemeldinger",
-    "last": "om kva du synast!"
+    "second": "tilbakemeldingar",
+    "last": "om kva du synes!"
   },
   "lang": {
     "choose": "Velg språk",
@@ -29,29 +51,29 @@
     "title": "Tilbakemelding"
   },
   "query": {
-    "intro": "Søk etter innhold",
+    "intro": "Søk etter innhald",
     "do": "Søk",
-    "clear": "Nullstille søk"
+    "clear": "Fjern alle filter"
   },
   "login": {
     "title": "Logg inn"
   },
   "about": {
-    "about": "Felles Datakatalog",
+    "about": "Om felles Datakatalog",
     "title": "Felles datakatalog",
     "titleSub": "Oversikt over datasett frå verksemder i Noreg.",
-    "ingress": "Felles Datakatalog er ei oversikt over kva data dei ulike offentlege verksemdene har, korleis dei heng saman og kva dei betyr. Datakatalogen gjer det mogleg for deg å søke i opplysningane hos offentlege verksemder og bruke dei til for eksempel analyseformål.",
-    "maintext": "Regjeringa seier i Digital Agenda at brukarane skal levere informasjon til offentleg forvaltning berre ein gong, fordi forvaltninga sjølv skal sørge for å dele nødvendig informasjon med kvarandre. Felles datakatalog er første steget for å nå dette målet. Samarbeidsorganet Skate (Styring og koordinering av tenester i e-forvaltning) har beskrive ambisjonsnivået for informasjonsforvaltning i tre trinn, og Felles datakatalog skal i første trinn skaffe ei felles dataoversikt og ei felles forståing av informasjon i form av omgrep. Neste trinn har fokus på tilgjengeleggjering av informasjon i ein felles API-katalog. I tredje trinn ligg alt til rette for at gjenbruk av data er hovudregel og for prinsippet om berre ein gong.<br><br><b>Informasjonsforvaltning</b><br> Digitaliseringsrundskrivet peiker på at alle offentlege verksemder skal ha ei oversikt over kva data dei handterer, kva dataa betyr, kva dei kan brukast til, kva prosessar dei er ein del av  og kven som kan bruke dataa (informasjonsforvaltning). Direktoratet for Forvaltning og IKT (Difi) utarbeider eit felles rammeverk med standardiserte metodar og prinsipp som vil gjere det enklare for verksemdene som skal i gang med omgrepsarbeid.",
+    "ingress": "Felles Datakatalog er ei oversikt over kva data dei ulike offentlege verksemdene har, korleis dei heng saman og kva dei betyr. Datakatalogen gjer det mogleg for deg å søke i opplysningane hos offentlege verksemder og bruke dei for til dømes analyseformål.",
+    "maintext": "Regjeringa seier i Digital Agenda at brukarane skal levere informasjon til offentleg forvaltning berre ein gong, fordi forvaltninga sjølv skal sørge for å dele nødvendig informasjon med kvarandre. Felles datakatalog er første steget for å nå dette målet. Samarbeidsorganet Skate (Styring og koordinering av tenester i e-forvaltning) har beskrive ambisjonsnivået for informasjonsforvaltning i tre trinn, og Felles datakatalog skal i første trinn skaffe ei felles dataoversikt og ei felles forståing av informasjon i form av omgrep. Neste trinn har fokus på tilgjengeleggjering av informasjon i ein felles API-katalog. I tredje trinn ligg alt til rette for at gjenbruk av data er hovudregel og for prinsippet om berre ein gong.<br><br><b>Informasjonsforvaltning</b><br> Digitaliseringsrundskrivet peiker på at alle offentlege verksemder skal ha ei oversikt over kva data dei handterar, kva dataa betyr, kva dei kan brukast til, kva prosessar dei er ein del av og kven som kan bruke dataa (informasjonsforvaltning). Direktoratet for Forvaltning og IKT (Difi) utarbeider eit felles rammeverk med standardiserte metodar og prinsipp som vil gjere det enklare for verksemdene som skal i gang med omgrepsarbeid.",
     "dataNorgeHeader": "Import fra data.norge.no, geonorge.no m.fl.",
-    "dataNorgeText": "<b>Import fra data.norge.no, geonorge.no m.fl.</b><br>Felles datakatalog importerer data-beskrivelser fra andre kataloger, blant annet <a href='https://data.norge.no' target='blank'>data.norge.no</a> (<a href='https://data.norge.no/data/direktoratet-forvaltning-og-ikt/datanorgeno-nasjonal-katalog-over-åpne-offentlige-datasett' target='blank'>API</a>) og geonorge.no. Dette gjøres ved å bruke DCAT-AP-NO som dataformat for å utveksle data-beskrivelser.",
+    "dataNorgeText": "<b>Import fra data.norge.no, geonorge.no m.fl.</b><br>Felles datakatalog importerar dataskildringar fra andre katalogar, blant anna <a href='https://data.norge.no' target='blank'>data.norge.no</a> (<a href='https://data.norge.no/data/direktoratet-forvaltning-og-ikt/datanorgeno-nasjonal-katalog-over-åpne-offentlige-datasett' target='blank'>API</a>) og geonorge.no. Dette vert gjort ved å bruke DCAT-AP-NO som dataformat for å utveksle dataskildringar.",
     "register": "Registrere datasett",
-    "helpToRegister": "Hjelp til å komme i gang med å registrere datasett",
+    "helpToRegister": "Hjelp til å komme i gong med å registrere datasett",
     "help": "Hjelp",
     "status":"Status implementasjon",
     "standard":"DCAT-AP-NO 1.1 standarden",
     "guide":"Rettleiar",
-    "fordataowners": "For dataeigare",
-    "fordatausers": "For databrukare",
+    "fordataowners": "For dataeigarar",
+    "fordatausers": "For databrukarar",
     "technical": "Teknisk"
   },
   "page": {
@@ -61,26 +83,28 @@
     "result.summary": "Søket gav ",
     "dataset":"treff",
     "nosearch.summary":"Søk blant",
-    "nosearch.descriptions":"datasettbeskrivelser",
+    "nosearch.descriptions":"datasettskildringar",
     "datasetTab": "Datasett",
+    "apiTab": "Api",
     "termTab": "Omgrep",
-    "nosearch.concepts":"omgrep",
-    "nosearch.descriptions":"datasett beskrivelser"
+    "nosearch.concepts":"omgrep"
   },
   "hitstats": {
     "nosearch": {
       "search": "Søk blant",
-      "descriptions": "datasettbeskrivelser"
+      "descriptions": "datasettskildringar"
     },
-    "search": "Søket ga",
+    "search": "Søket gav",
     "datasetHits": "treff i datasett",
     "datasetNoHits": "ingen treff i datasett",
-    "conceptHits": "treff i begrep",
-    "conceptNoHits": "ingen treff i begrep",
+    "conceptHits": "treff i omgrep",
+    "conceptNoHits": "ingen treff i omgrep",
     "noHits": "dessverre ingen treff",
-    "concepts": "begrep",
+    "concepts": "omgrep",
     "and": "og",
-    "but": "men"
+    "but": "men",
+    "apis": "API",
+    "apiHits": "treff i API"
   },
   "facet": {
     "organisation":"Verksemd",
@@ -91,27 +115,30 @@
     "spatial":"Geografi",
     "temporal":"Tidsperiode",
     "standard":"Standard",
-    "showmore":"Vis flere",
+    "showmore":"Vis fleire",
     "showfewer":"Vis færre",
     "publishers": {
       "STAT": "Stat",
       "FYLKE": "Fylke",
       "KOMMUNE": "Kommune",
       "PRIVAT": "Privat",
-      "ANNET": "Annet"
-    }
+      "ANNET": "Anna"
+    },
+    "provenance": "Opphav",
+    "provider": "Tilbydar",
+    "format": "Format"
   },
   "result": {
     "dataset":"Datasett",
-    "waiting":"Henter data ..."
+    "waiting":"Hentar data ..."
   },
   "noHits": {
-    "error": "Ingen datasett funnet"
+    "error": "Ingen datasett funne"
   },
   "footer": {
     "organisation.number": "Organisasjonsnummer:",
     "information": "Informasjonskapslar - personvern",
-    "information_text": "Dette er et samarbeidsprosjekt mellom Brønnøysundregistrene, Difi og øvrige SKATE-etater.",
+    "information_text": "Dette er eit samarbeidsprosjekt mellom Brønnøysundregistrene, Difi og andre SKATE-etatar.",
     "mail": "fellesdatakatalog@brreg.no",
     "privacy": " og personvern",
     "contact": "Kontakt:"
@@ -120,91 +147,94 @@
     "by": "Sorter på",
     "relevance": "relevans",
     "title": "tittel",
-    "publisher": "utgiver",
+    "publisher": "utgivar",
     "modified": "sist endra"
   },
   "search_hit": {
-    "owned": "Eies av",
-    "public": "Offentlig",
-    "restricted": "Begrenset offentlighet",
-    "ukjent": "Ukjent",
-    "non_public": "Unntatt offentlighet",
-    "sample": "Eksempeldata tilgjengelig",
-    "NationalBuildingBlock": "Nasjonal felleskomponent"
+    "owned": "Eigd av",
+    "sample": "Eksempeldata tilgjengeleg",
+    "NationalBuildingBlock": "Nasjonal felleskomponent",
+    "bruker": "Brukerinnsamla data",
+    "nasjonal": "Nasjonal felleskomponent",
+    "tredjepart": "Tredjepart",
+    "vedtak": "Vedtak"
   },
   "dataset": {
     "accessRight": "Datasettet er",
     "title": "Datasett",
     "type": "Type",
     "firstHarvested": "Publisert i Felles datakatalog",
-    "conformsTo": "Innholdsstandard",
+    "lastChanged": "Sist endra i Felles datakatalog",
+    "conformsTo": "Innhaldsstandard",
     "informationModel": "Informasjonsmodell",
     "informationModelDefaultText": "Informasjonsmodell",
     "distribution": {
       "title": "Distribusjon",
-      "description": "Beskrivelse",
-      "format": "Tilgjengelige format",
+      "format": "Tilgjengelege format",
       "accessUrl": "TilgangsURL",
-      "license": "Forutsetning for bruk av datasettet",
+      "license": "Føresetnad for bruk av datasettet",
       "licenseLinkDefault": "Lisens",
-      "conformsTo": "Innholdsstandard",
-      "page": "Mer informasjon om denne distribusjonen",
+      "conformsTo": "Innhaldsstandard",
+      "page": "Meir informasjon om denne distribusjonen",
       "standard": "Standard",
-      "referenceDefaultCode": "Andre relasjoner",
+      "referenceDefaultCode": "Andre relasjonar",
       "referenceDefault": "Relasjon",
       "type": "Type"
     },
-    "issued": "Utgivelsesdato",
-    "quality": "Kvalitet på innhold",
+    "issued": "Utgjevingsdato",
+    "quality": "Kvalitet på innhald",
     "provenance": "Opphav",
     "currentness": "Aktualitet",
     "frequency": "Oppdateringsfrekvens",
-    "miscInfo": "Øvrig info",
-    "created": "Opprettet",
-    "modified": "Sist endret",
+    "miscInfo": "Anna info",
+    "created": "Oppretta",
+    "modified": "Sist endra",
     "language": "Språk",
     "theme": "Tema",
-    "periodFrom": "Gjelder fra",
-    "periodTo": "Gjelder til",
-    "spatial": "Geografisk avgrenset til",
-    "information": "Opplysninger",
+    "periodFrom": "Gjeld frå",
+    "periodTo": "Gjeld til",
+    "spatial": "Geografisk avgrensa til",
+    "information": "Opplysningar",
     "keyword": "Emneord",
     "subject": "Omgrep",
-    "restrictions": "Restriksjoner",
+    "restrictions": "Restriksjonar",
     "comments": "Kommentar",
-    "objective": "Formål",
+    "objective": "Føremål",
     "related": "Relaterte",
     "relates": "Relatert",
     "restriction": "Restriksjon",
-    "downloadText": "Last ned DCAT-beskrivelse:",
-    "isPartOf": "Datasettet er en del av",
+    "downloadText": "Last ned DCAT-forklaring:",
+    "isPartOf": "Datasettet er ein del av",
     "relevanceAnnotation": "Relevans",
     "completenessAnnotation": "Kompletthet",
     "accuracyAnnotation": "Nøyaktighet",
-    "availabilityAnnotations": "Tilgjengelighet",
+    "availabilityAnnotations": "Tilgang",
     "contactPoint": {
       "email": "E-post",
       "telephone": "Telefon",
       "background": "Bakgrunnsinformasjon om datasettet",
       "organizationUnit": "Ta kontakt med"
     },
-    "legalBasisForRestriction": "Skjermingshjemmel",
-    "legalBasisForRestrictionDefaultText": "Hjemmel",
-    "legalBasisForProcessing": "Behandlingsgrunnlag",
+    "legalBasisForRestriction": "Skjermingsheimel",
+    "legalBasisForRestrictionDefaultText": "Heimel",
+    "legalBasisForProcessing": "Handsamingsgrunnlag",
     "legalBasisForProcessingDefaultText": "Grunnlag",
-    "legalBasisForAccess": "Utleveringshjemmel",
-    "leagalBasisForAccessDefaultText": "Hjemmel",
+    "legalBasisForAccess": "Utleveringsheimel",
+    "leagalBasisForAccessDefaultText": "Heimel",
     "accessRights": {
       "authorityCode": {
         "public": "Offentleg",
         "restricted": "Avgrensa offentlegheit",
-        "nonPublic": "Unntatt offentlegheit"
+        "nonPublic": "Unntatt offentlegheit",
+        "publicDetailsLabel": "Datasettet er offentleg",
+        "restrictedDetailsLabel": "Datasettet har avgrensa offentlegheit",
+        "nonPublicDetailsLabel": "Datasettet er unntatt offentlegheit"
       }
     },
     "sample": "Eksempeldata"
   },
   "terms": {
-    "compareTerms": "Sammenlign omgrep",
+    "compareTerms": "Samanlikne omgrep",
     "removeTerms": "Fjern",
     "altLabel": "Også kjent som:",
     "docCount": "Brukt i",
@@ -214,40 +244,58 @@
     "definition": "Definisjon",
     "inScheme": "Fagområde / bruksområde",
     "source": "Kjelde",
-    "note": "Beskriving",
+    "note": "Forklaring",
+    "compare": "Samanlikning",
     "hideCompare": "Skjul samanlikning",
     "openCompare": "Vis samanlikning",
     "remove": "Fjern omgrep",
     "added": "Du har lagt ",
     "toCompare": " omgrep til samanlikning - klikk for å vise",
-    "addCompare": "Legg til i sammenligning",
+    "addCompare": "Legg til i samanlikning",
     "altLabel": "Også kjent som:"
   },
   "report": {
-    "title": "Visar tall for ",
-    "allEntities": "alle virksemder tilsaman",
+    "title": "Viser tall for ",
+    "allEntities": "alle verksemder tilsaman",
     "total": "datasett totalt",
     "accessLevel": "Tilgangsnivå",
     "public": "Datasett som er offentleg",
-    "restricted": "Datasett med avgrensa offentleghet",
-    "nonPublic": "Datasett som er unntatt offentleghet",
+    "restricted": "Datasett med avgrensa offentlegheit",
+    "nonPublic": "Datasett som er unntatt offentlegheit",
     "unknown": "Datasett med ukjend tilgangsnivå",
-    "changesLastWeek": "Endring siste 7 dager",
-    "changesLastMonth": "Endring siste 30 dager",
-    "changesLastYear": "Endring siste 365 dager",
+    "changesLastWeek": "Endring siste 7 dagar",
+    "changesLastMonth": "Endring siste 30 dagar",
+    "changesLastYear": "Endring siste 365 dagar",
     "newDatasets": "Nye datasett",
-    "deletedDatasets": "Slettede datasett",
+    "deletedDatasets": "Sletta datasett",
     "concepts": "Bruk av omgrep",
-    "withConcepts": "Datasett som benytter omgrep",
-    "withoutConcepts": "Datasett som ikkje benytter omgrep",
-    "distributions": "Distribusjoner",
-    "withDistributions": "Offentlege datasett med distribusjoner",
-    "withoutDistributions": "Offentlege datasett utan distribusjoner",
-    "searchPublisher": "Velg virksomhet",
-    "searchPublisherPlaceholder": "Søk på virksomhetsnavn...",
-    "typeToSearch": "Skriv for å søke"
+    "withConcepts": "Datasett som nyttar omgrep",
+    "withoutConcepts": "Datasett som ikkje nyttar omgrep",
+    "distributions": "Distribusjonar",
+    "withDistributions": "Offentlege datasett med distribusjonar",
+    "withoutDistributions": "Offentlege datasett utan distribusjonar",
+    "searchPublisher": "Velg verksemd",
+    "searchPublisherPlaceholder": "Søk på verksemdnavn...",
+    "typeToSearch": "Skriv for å søke",
+    "openData":"Opne data",
+    "catalogs":"Katalogar"
   },
   "registration": {
-    "title": "Hvordan komme i gang med registrering av datasett"
+    "title": "Korleis komme i gong med registrering av datasett"
+  },
+  "api": {
+    "accessRight": {
+      "public": "API-et er opent",
+      "restricted": "API med avgrensa offentlegheit",
+      "nonPublic": "API-et er unntatt offentlegheit",
+      "unknown": "Ukjend tilgang"
+    },
+    "endpoints": {
+      "operations": "Operasjonar",
+      "operation": "Operasjon",
+      "description": "Skildring"
+    },
+    "provider": "Tilbydar:",
+    "linkDatasetReference": "Lenke til datasettreferanse"
   }
 }

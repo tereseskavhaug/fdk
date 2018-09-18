@@ -1,0 +1,41 @@
+{
+  "apispec": {
+    "properties": {
+      "apiSpecUrl": {
+        "type": "keyword"
+      },
+      "publisher": {
+        "properties": {
+          "name": {
+            "type": "text",
+            "fielddata": true,
+            "analyzer": "norwegian",
+            "fields": {
+              "raw": {
+                "type": "keyword"
+              }
+            }
+          },
+          "orgPath": {
+            "type": "text",
+            "fielddata": "true",
+            "analyzer": "path-analyzer"
+          }
+        }
+      },
+      "accessRights": {
+        "properties": {
+          "code": {
+            "type": "keyword"
+          }
+        }
+      },
+      "formats": {
+        "type": "keyword"
+      },
+      "openApi": {
+        "enabled": "false"
+      }
+    }
+  }
+}

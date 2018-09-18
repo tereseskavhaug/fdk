@@ -1,16 +1,16 @@
 package no.dcat.datastore.domain.dcat.builders;
 
+import no.dcat.datastore.domain.dcat.Publisher;
+import no.dcat.datastore.domain.dcat.vocabulary.DCAT;
 import no.dcat.datastore.domain.dcat.vocabulary.DCATCrawler;
 import no.dcat.datastore.domain.dcat.vocabulary.DCATNO;
+import no.dcat.datastore.domain.dcat.vocabulary.EnhetsregisteretRDF;
 import no.dcat.datastore.domain.dcat.vocabulary.Vcard;
 import no.dcat.shared.Contact;
 import no.dcat.shared.PeriodOfTime;
 import no.dcat.shared.Reference;
 import no.dcat.shared.SkosCode;
 import no.dcat.shared.SkosConcept;
-import no.dcat.datastore.domain.dcat.Publisher;
-import no.dcat.datastore.domain.dcat.vocabulary.DCAT;
-import no.dcat.datastore.domain.dcat.vocabulary.EnhetsregisteretRDF;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
@@ -31,7 +31,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 public abstract class AbstractBuilder {
 
@@ -42,6 +41,8 @@ public abstract class AbstractBuilder {
     static Property owlTime_hasEnd = ResourceFactory.createProperty("http://www.w3.org/TR/owl-time/hasEnd");
     static Property schema_startDate = ResourceFactory.createProperty("http://schema.org/startDate");
     static Property schema_endDate = ResourceFactory.createProperty("http://schema.org/endDate");
+
+    public static String defaultLanguage = "no";
 
     private static Logger logger = LoggerFactory.getLogger(AbstractBuilder.class);
     static Map<String, Contact> contactMap = new HashMap<>();
@@ -294,7 +295,7 @@ public abstract class AbstractBuilder {
             Statement statement = iterator.next();
             String language = statement.getLanguage();
             if (language == null || language.isEmpty()) {
-                language = "no";
+                language = defaultLanguage;
             }
             if (statement.getString() != null && !statement.getString().isEmpty()) {
                 map.put(language, statement.getString());
@@ -316,7 +317,7 @@ public abstract class AbstractBuilder {
             Statement statement = iterator.next();
             String language = statement.getLanguage();
             if (language == null || language.isEmpty()) {
-                language = "no";
+                language = defaultLanguage;
             }
             if (statement.getString() != null && !statement.getString().isEmpty()) {
                 List<String> x = map.get(language);
@@ -562,7 +563,17 @@ public abstract class AbstractBuilder {
     protected static void extractPublisherFromStmt(Publisher publisher, Resource object) {
         publisher.setUri(object.getURI());
         publisher.setId(extractAsString(object, DCTerms.identifier));
-        publisher.setName(extractAsString(object, FOAF.name));
+
+        String name = extractAsString(object, FOAF.name);
+        if (name != null) {
+            publisher.setName(name);
+        }
+
+        Map<String, String> preferredName = extractLanguageLiteral(object, SKOS.prefLabel);
+        if (preferredName != null && preferredName.size() > 0) {
+            publisher.setPrefLabel(preferredName);
+        }
+
         publisher.setValid(extractAsBoolean(object, DCTerms.valid));
         publisher.setOrgPath(extractAsString(object, DCATNO.organizationPath));
 
@@ -589,7 +600,7 @@ public abstract class AbstractBuilder {
         skosCode.setUri(codeUri + kode);
         skosCode.setCode(kode);
         Map<String, String> languageString = new HashMap<>();
-        languageString.put("no", beskrivelse);
+        languageString.put(defaultLanguage, beskrivelse);
         skosCode.setPrefLabel(languageString);
 
         return skosCode;

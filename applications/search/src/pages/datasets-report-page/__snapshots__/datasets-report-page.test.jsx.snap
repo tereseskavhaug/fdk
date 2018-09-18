@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render DatasetsReportPage correctly 1`] = `
+<section
+  className="container"
+>
+  <div
+    className="row"
+  >
+    <div
+      className="col-md-4"
+    >
+      <Button
+        className="fdk-button"
+        color="primary"
+        onClick={[Function]}
+        tag="button"
+      >
+        Clear
+      </Button>
+      <PublishersSelect
+        onChange={[Function]}
+        value={null}
+      />
+      <PublishersTree
+        onChange={[Function]}
+        value={null}
+      />
+    </div>
+    <div
+      className="col-md-8"
+    >
+      <StatsResolver
+        entityName={null}
+        orgPath={null}
+      />
+    </div>
+  </div>
+</section>
+`;

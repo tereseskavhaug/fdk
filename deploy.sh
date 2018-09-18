@@ -4,6 +4,7 @@ set -e
 # Deployment pipeline (environment order)
 # UT1 -> ST2 -> TT1 -> ST1 ->PPE
 #     -> PP2 -> PPE
+#     -> UT2
 # UT1: Development environment. Build server continually deploys to this environment
 # ST2: Internal test server with local (mocked) authorisation
 # TT1: Externally accessible test server with local (mocked) authorisation
@@ -34,18 +35,16 @@ environment=$2
 git fetch
 
 GIT_STATUS=`git status | grep "Your branch is"`
-if [ "${GIT_STATUS}" != "Your branch is up-to-date with 'origin/develop'." ] ; then
+if [ "${GIT_STATUS}" != "Your branch is up to date with 'origin/develop'." ] ; then
   echo "You need to be on origin/develop and be up to date with origin";
   exit;
 fi
 
-components="fuseki harvester harvester-api nginx-registration nginx-search reference-data registration-react registration-api registration-auth registration-validator search search-api"
+components="fuseki harvester harvester-api nginx-registration nginx-search reference-data registration-react registration-api registration-auth search api-cat search-api"
 
 
-# remove all local tags
-git tag -d $(git tag -l)
 # fetch all tags from github
-git fetch --tags
+git fetch --prune --tags
 
 DATETIME=`date "+%Y-%m-%dT%H_%M_%S"`
 
@@ -74,32 +73,34 @@ function gitTag {
   fromEnvironment=$2
   toEnvironment=$3
 
-  # checkout commit for tag that we are using as the base to tag on top of
+  echo "Checkout tags/${fromEnvironment}_latest"
   git checkout tags/${fromEnvironment}_latest
 
-  # remove ***_latest tag from github and locally
-  git push --delete origin ${toEnvironment}_latest || true
-  git tag --delete ${toEnvironment}_latest || true
-  #if only one component is deployed, also remove latest label for that component
-  if [ "$component" != "all" ] ; then
-    git push --delete origin ${toEnvironment}_latest_${component} || true
-    git tag --delete ${toEnvironment}_latest_${component} || true
-  fi
-
   # tag checked-out commit with ***_latest tag
-  git tag ${toEnvironment}_latest
-  git tag ${toEnvironment}_${DATETIME}
+  echo "delete origin tag ${toEnvironment}_latest"
+  git push --delete origin ${toEnvironment}_latest
+  echo "tag ${toEnvironment}_latest"
+
+  git tag -f ${toEnvironment}_latest
+
+  echo "tag ${toEnvironment}_${DATETIME}"
+  git tag -f ${toEnvironment}_${DATETIME}
+
   if [ "$component" != "all" ] ; then
     # if only one component is deployed, also label it with component name
-    git tag ${toEnvironment}_latest_${component}
-    git tag ${toEnvironment}_${DATETIME}_${component}
+    git push --delete origin ${toEnvironment}_latest_${component}
+    git tag -f ${toEnvironment}_latest_${component}
+
+    git tag -f ${toEnvironment}_${DATETIME}_${component}
   fi
 
-  # don't forget to checkout develop again, don't want any surprises later
-  git checkout develop
-
   # push all tags to github
+  echo "push tags"
   git push origin --tags
+
+  # don't forget to checkout develop again, don't want any surprises later
+  echo "checkout develop"
+  git checkout develop
 
 }
 
@@ -139,6 +140,21 @@ elif [ "$environment" == "st2" ] ; then
   fi
 
   gitTag ${component} ut1 st2
+
+
+#temporary environment for testing elasticsearch 5.x
+elif [ "$environment" == "ut2" ] ; then
+
+  if [ "$component" == "all" ] ; then
+    for i in $components
+    do
+      dockerTag ${i} ut1 ut2
+    done
+  else
+    dockerTag ${component} ut1 ut2
+  fi
+
+  gitTag ${component} ut1 ut2
 
 
 elif [ "$environment" == "tt1" ] ; then

@@ -1,45 +1,45 @@
-version: "2"
+version: "3"
 
 services:
   search:
     image: dcatno/search:latest
-    depends_on:
-      - search-api
-      - fuseki
-      - reference-data
-    networks:
-      platform:
+    expose:
+     - "3000"
 
   search-api:
     image: dcatno/search-api:latest
+    expose:
+      - "8080"
     depends_on:
       - elasticsearch
-    networks:
-      platform:
+
+  api-cat:
+    image: dcatno/api-cat:latest
+    expose:
+      - "8080"
+      - "8181"
+    depends_on:
+      - elasticsearch5
+      - reference-data
 
   nginx-search:
     image: dcatno/nginx-search:latest
+    expose:
+     - "8080"
     depends_on:
       - search
       - search-api
-    networks:
-      platform:
-
-  gdoc:
-    image: dcatno/gdoc:latest
-    networks:
-      platform:
+      - harvester-api
 
   fuseki:
     image: dcatno/fuseki:latest
-    networks:
-      platform:
+    expose:
+     - "8080"
 
   harvester-api:
     image: dcatno/harvester-api:latest
-    networks:
-      platform:
-      logging:
+    expose:
+     - "8080"
     depends_on:
      - fuseki
      - elasticsearch
@@ -47,103 +47,69 @@ services:
 
   harvester:
     image: dcatno/harvester:latest
-    networks:
-      platform:
-      logging:
+    expose:
+     - "8080"
     depends_on:
      - elasticsearch
      - fuseki
      - harvester-api
 
- # elasticsearch5:
- #   image: "docker.elastic.co/elasticsearch/elasticsearch:5.2.0"
- #   environment:
- #     - xpack.security.enabled=false
- #     - cluster.name=elasticsearch
- #   ports:
- #     - "920:9200"
- #     - "9300:9300"
- #   networks:
- #     platform:
- #       aliases:
- #         - es
- #     logging:
- #       aliases:
- #         - log_es
+  elasticsearch5:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.9
 
   elasticsearch:
     image: elasticsearch:2.4.1
-    networks:
-      platform:
-      logging:
+    expose:
+     - "9200"
+     - "9300"
+
+  elasticsearch-copy:
+    image: dcatno/elasticsearch-copy:latest
 
   dev-management:
     image: dcatno/dev-management:latest
+    expose:
+     - "8080"
     depends_on:
       - elasticsearch
       - fuseki
       - harvester-api
-    networks:
-      platform:
 
   nginx-registration:
-      image: dcatno/nginx-registration:latest
-      depends_on:
-        - registration-api
-        - reference-data
-      networks:
-        platform:
+    image: dcatno/nginx-registration:latest
+    expose:
+     - "8080"
+    depends_on:
+      - registration-react
+      - registration-api
+      - reference-data
 
   registration-api:
     image: dcatno/registration-api:latest
+    expose:
+     - "8080"
     depends_on:
       - elasticsearch
       - reference-data
       - registration-auth
-    networks:
-      platform:
 
   registration-react:
     image: dcatno/registration-react:latest
-    depends_on:
-      - nginx-registration-ssl
-      - registration-api
-    networks:
-      platform:
-
-  reference-data:
-    image: dcatno/reference-data:latest
-    networks:
-      platform:
+    expose:
+     - "4300"
 
   registration-auth:
     image: dcatno/registration-auth:latest
-    networks:
-      platform:
+    expose:
+     - "8080"
 
-  registration-validator:
-    image: dcatno/registration-validator:latest
-    networks:
-      platform:
+  reference-data:
+    image: dcatno/reference-data:latest
+    expose:
+     - "8080"
 
-
-# logstash:
-#   image: dcatno/logstash:latest
-#   entrypoint: /opt/logstash/bin/logstash -f /etc/logstash/conf.d/logstash.conf
-#    volumes:
-#      - ./logs:/usr/local/tomcat/logs:rw
-#    depends_on:
-#      - elasticsearch
-#    networks:
-#      logging:
-
-  kibana:
-    image: kibana:4.6
-    depends_on:
-      - elasticsearch
-    networks:
-      platform:
-
-networks:
-  platform:
-  logging:
+  e2e:
+    image: dcatno/e2e:latest
+    volumes:
+      - ./applications/e2e/test:/usr/src/app/test:rw
+    command: tail -F /dev/null

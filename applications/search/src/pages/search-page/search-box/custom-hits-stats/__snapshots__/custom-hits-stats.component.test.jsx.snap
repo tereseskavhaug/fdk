@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render CustomHitsStats correctly when no hits 1`] = `
+<div
+  className="sk-hits-stats"
+  data-qa="hits-stats"
+>
+  <div
+    className="sk-hits-stats__info"
+    data-qa="info"
+  />
+</div>
+`;
+
+exports[`should render CustomHitsStats correctly when no initial search 1`] = `
+<div
+  className="sk-hits-stats"
+  data-qa="hits-stats"
+>
+  <div
+    className="sk-hits-stats__info nosearch"
+    data-qa="info"
+  >
+    <div>
+      <span>
+        Search among
+         
+        100
+         
+        dataset descriptions
+      </span>
+      <span>
+         
+        and
+         
+        100
+         
+        concepts
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`should render CustomHitsStats correctly when search performed  1`] = `
+<div
+  className="sk-hits-stats"
+  data-qa="hits-stats"
+>
+  <div
+    className="sk-hits-stats__info"
+    data-qa="info"
+  />
+</div>
+`;

@@ -1,0 +1,133 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render DatasetDescription correctly 1`] = `
+<header>
+  <div
+    className="fdk-detail-date mb-5"
+  >
+    <HarvestDate
+      harvest={null}
+    />
+  </div>
+  <SearchHitHeader
+    provenance={null}
+    publisher={
+      Object {
+        "id": "987654321",
+        "name": "TESTETATEN",
+        "uri": "http://data.brreg.no/enhetsregisteret/enhet/987654321",
+      }
+    }
+    publisherItems={null}
+    publisherLabel="Owned by"
+    tag="h1"
+    theme={
+      Array [
+        Object {
+          "title": Object {
+            "nb": "Forvaltning og offentlig støtte",
+          },
+          "uri": "http://publications.europa.eu/resource/authority/data-theme/GOVE",
+        },
+        Object {
+          "title": Object {
+            "nb": "Miljø",
+          },
+          "uri": "http://publications.europa.eu/resource/authority/data-theme/ENVI",
+        },
+      ]
+    }
+    title="AAMarkagrensen Oslo Kommune og nærliggende kommuner"
+    titleLink={null}
+  />
+  <ShowMore
+    contentHtml={null}
+    label="Description"
+    showLessButtonText="Show less"
+    showMoreButtonText="Show the full description"
+  />
+  <ShowMore
+    contentHtml="Datasettes formål er nullam quis rius eget urna mollis ornare vel eu leo. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper."
+    label="Objective"
+    showLessButtonText="Show less"
+    showMoreButtonText="Show the full objective"
+  />
+</header>
+`;
+
+exports[`should render DatasetDescription correctly 2`] = `
+<header>
+  <div
+    className="fdk-detail-date mb-5"
+  >
+    <HarvestDate
+      harvest={null}
+    />
+  </div>
+  <SearchHitHeader
+    provenance={null}
+    publisher={
+      Object {
+        "id": "987654321",
+        "name": "TESTETATEN",
+        "uri": "http://data.brreg.no/enhetsregisteret/enhet/987654321",
+      }
+    }
+    publisherItems={null}
+    publisherLabel="Owned by"
+    tag="h1"
+    theme={
+      Array [
+        Object {
+          "title": Object {
+            "nb": "Forvaltning og offentlig støtte",
+          },
+          "uri": "http://publications.europa.eu/resource/authority/data-theme/GOVE",
+        },
+        Object {
+          "title": Object {
+            "nb": "Miljø",
+          },
+          "uri": "http://publications.europa.eu/resource/authority/data-theme/ENVI",
+        },
+      ]
+    }
+    title="AAMarkagrensen Oslo Kommune og nærliggende kommuner"
+    titleLink={null}
+  />
+  <ShowMore
+    contentHtml={null}
+    label="Description"
+    showLessButtonText="Show less"
+    showMoreButtonText="Show the full description"
+  />
+  <ShowMore
+    contentHtml="Datasettes formål er nullam quis rius eget urna mollis ornare vel eu leo. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper."
+    label="Objective"
+    showLessButtonText="Show less"
+    showMoreButtonText="Show the full objective"
+  />
+</header>
+`;
+
+exports[`should render DatasetDescription correctly with no props 1`] = `
+<header>
+  <div
+    className="fdk-detail-date mb-5"
+  >
+    <HarvestDate
+      harvest={null}
+    />
+  </div>
+  <SearchHitHeader
+    provenance={null}
+    publisher={null}
+    publisherItems={null}
+    publisherLabel="Owned by"
+    tag="h1"
+    theme={null}
+    title=""
+    titleLink={null}
+  />
+</header>
+`;

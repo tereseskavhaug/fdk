@@ -1,6 +1,7 @@
 package no.dcat.harvester.crawler;
 
 import com.google.common.cache.LoadingCache;
+import no.dcat.datastore.domain.dcat.vocabulary.DCAT;
 import no.dcat.harvester.DataEnricher;
 import no.dcat.harvester.DatasetSortRankingCreator;
 import no.dcat.harvester.crawler.converters.BrregAgentConverter;
@@ -21,6 +22,8 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.ResIterator;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFLanguages;
@@ -28,13 +31,9 @@ import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.vocabulary.DCTerms;
+import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Service;
-import sun.net.www.protocol.file.FileURLConnection;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -65,6 +64,8 @@ public class CrawlerJob implements Runnable {
     private List<String> validationResult = new ArrayList<>();
 
     private Map<RDFNode, ImportStatus> nonValidDatasets = new HashMap<>();
+    private List<String> datasetsInError = new ArrayList<>();
+
     private StringBuilder crawlerResultMessage;
     private Resource rdfStatus;
     private SubjectCrawler subjectCrawler;
@@ -92,6 +93,10 @@ public class CrawlerJob implements Runnable {
         return dcatSource.getId();
     }
 
+    public List<String> getDatasetsInError() {
+        return datasetsInError;
+    }
+
     void testMode() {
         test = true;
     }
@@ -100,11 +105,48 @@ public class CrawlerJob implements Runnable {
         return model;
     }
 
+    public List<String> getTotalDatasets(Model model) {
+        List<String> result = new ArrayList<>();
+
+        ResIterator datasetIterator = model.listResourcesWithProperty(RDF.type, DCAT.Dataset);
+        while (datasetIterator.hasNext()) {
+            Resource datasetResource = datasetIterator.next();
+            result.add(datasetResource.getURI());
+
+        }
+
+        return result;
+    }
+
+    public Set<String> getOrphanedDatasetUris(Model model) {
+        Set<String> orphans = new HashSet<>();
+
+        orphans.addAll(getTotalDatasets(model));
+        
+        ResIterator catalogIterator = model.listResourcesWithProperty(RDF.type, DCAT.Catalog);
+
+        while(catalogIterator.hasNext()) {
+            Resource catalogResource = catalogIterator.next();
+
+            StmtIterator datasetIterator = catalogResource.listProperties(DCAT.dataset);
+            while (datasetIterator.hasNext()) {
+                Statement datasetStatement = datasetIterator.next();
+                Resource datasetResource = datasetStatement.getObject().asResource();
+                if (datasetResource.hasProperty(RDF.type, DCAT.Dataset)) {
+
+                    orphans.remove(datasetResource.getURI());
+                }
+            }
+        }
+
+        return orphans;
+    }
+
+
     @Override
     public void run() {
-        logger.info("[crawler_operations] [success] Started crawler job: {}", dcatSource.toString());
+        logger.info("Started crawler job: {}", dcatSource.toString());
         LocalDateTime start = LocalDateTime.now();
-
 
         try {
             Model union = prepareModelForValidation();
@@ -112,10 +154,15 @@ public class CrawlerJob implements Runnable {
             // if model is valid run the various handlers process method
             //TODO: Refaktorering. Nå er det et salig rot av lokale og globale variabler, parametre....
             if (isValid(union)) {
-                logger.debug("[crawler_operations] Valid datasets exists in input data!");
-                logger.debug("[crawler_operations] Number of non-valid datasets: " + nonValidDatasets.size());
+                logger.info("Total number of datasets to harvest: {}", getTotalDatasets(union).size());
+                logger.info("{} datasets have syntax problems", nonValidDatasets.size());
 
                 removeNonValidDatasets(union);
+                Set<String> orphanedDatasets = getOrphanedDatasetUris(union);
+
+                logger.warn("{} datasets were in error and are not imported: {}", datasetsInError.size(), datasetsInError);
+                logger.warn("{} datasets were orphaned (have no catalog) and are not imported: {}", orphanedDatasets.size(), orphanedDatasets);
+
                 crawlerResultMessage.append(removeNonResolvableLocations(union));
 
                 //add sort ranking to datasets
@@ -277,6 +324,35 @@ public class CrawlerJob implements Runnable {
         }
     }
 
+    String formatValidationMessage(ValidationError error) {
+
+        String subject = "";
+        if (error.getSubject() != null ) {
+            if (error.getSubject().isURIResource()) {
+                String subjectUri = error.getSubject().asResource().getURI();
+                if (subjectUri.startsWith("http")) {
+                    subject = " <" + subjectUri  + ">";
+                } else if (subjectUri.startsWith("file")){
+                    subject = " <" + lastPath(subjectUri) +">";
+                } else {
+                    subject = " " + subjectUri + "";
+                }
+            }
+        }
+
+        String msg = "[" + error.getRuleSeverity() + "] " + error.getClassName() +  subject + ". Rule " + error.getRuleId() + ": " + error.getRuleDescription();
+        //String oldmsg = "[validation_" + error.getRuleSeverity() + "] " + error.toString() + ", " + this.dcatSource.toString();
+        return msg;
+    }
+
+    String lastPath(String path) {
+        if (path != null && path.contains("/")) {
+            return path.substring(path.lastIndexOf("/")+1, path.length());
+        }
+
+        return path;
+    }
+
     /**
      * Checks if a RDF model is valid according to the validation rules that are defined for DCAT.
      *
@@ -296,7 +372,8 @@ public class CrawlerJob implements Runnable {
         final int[] errors ={0}, warnings ={0}, others ={0};
 
         DcatValidation.validate(model, (error) -> {
-            String msg = "[validation_" + error.getRuleSeverity() + "] " + error.toString() + ", " + this.dcatSource.toString();
+            String msg = formatValidationMessage(error);
+
             validationResult.add(msg);
 //            validationErrors.add(error);
 
@@ -354,19 +431,34 @@ public class CrawlerJob implements Runnable {
      * in global variable validationErrors
      * @param model the model containing the resources to be removed
      */
-    void removeNonValidDatasets(Model model) {
+    int removeNonValidDatasets(Model model) {
+
+        int counter = 0;
 
         for(Map.Entry<RDFNode, ImportStatus> entry : nonValidDatasets.entrySet()) {
             ImportStatus is = entry.getValue();
             if(!is.shouldBeImported) {
+                counter++;
+
+                datasetsInError.add(entry.getKey().toString());
+
                 Resource res = model.getResource( entry.getKey().toString());
                 //Remove triples where dataset is subject or object from model
                 model.removeAll(res, null, null);
                 model.removeAll(null, null, res);
             }
         }
+
+        return counter;
     }
 
+    boolean locationUriResponds(String locUri) throws IOException {
+        URL locUrl = new URL(locUri);
+        HttpURLConnection locConnection = (HttpURLConnection) locUrl.openConnection();
+        locConnection.setRequestMethod("HEAD");
+
+        return locConnection.getResponseCode() >= 200 && locConnection.getResponseCode() < 400;
+    }
 
     /**
      * Remove triples containing DCTerms.spatial URLs that cannot be resolved
@@ -378,13 +470,17 @@ public class CrawlerJob implements Runnable {
         ResIterator locIter = model.listSubjectsWithProperty(DCTerms.spatial);
         while (locIter.hasNext()) {
             Resource resource = locIter.next();
+
             String locUri = resource.getPropertyResourceValue(DCTerms.spatial).getURI();
+
+            if (locUri != null && locUri.startsWith("file://")) { // hack to remove fuseki file namespace on locations.
+                locUri = lastPath(locUri);
+            }
+
             try {
                 if (!illegalUris.contains(locUri)) {
-                    URL locUrl = new URL(locUri);
-                    HttpURLConnection locConnection = (HttpURLConnection) locUrl.openConnection();
-                    locConnection.setRequestMethod("GET");
-                    if (locConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+
+                    if (!locationUriResponds(locUri)) {
                         //Remove non-resolvable location from dataset
                         resultMsg.append(String.format("Dataset %s has non-resolvable property DCTerms.spatial: %s", resource.toString(), locUri));
                         resultMsg.append("\n");
@@ -393,10 +489,9 @@ public class CrawlerJob implements Runnable {
                         illegalUris.add(locUri);
                     }
                 }
-            } catch (MalformedURLException | ClassCastException e) {
-                logger.error("URL not valid: {}. Reason {}", locUri,e.getLocalizedMessage());
-            } catch (IOException e) {
-                logger.error("IOException: {}. Reason {}", locUri, e.getLocalizedMessage());
+            } catch (ClassCastException | IOException e) {
+                logger.error("Location URL not valid: {}. Reason {}", locUri, e.getLocalizedMessage());
+                illegalUris.add(locUri);
             }
 
         }

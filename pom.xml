@@ -5,7 +5,7 @@
 
 	<groupId>no.dcat</groupId>
 	<artifactId>fdk</artifactId>
-	<version>0.2.4-SNAPSHOT</version>
+	<version>1.0</version>
 	<packaging>pom</packaging>
 
 	<name>Felles Datakatalog</name>
@@ -30,31 +30,70 @@
 	</modules>
 
 	<properties>
-        <fdk.version>0.2.4-SNAPSHOT</fdk.version>
+        <fdk.version>1.0.0</fdk.version>
 		<java.encoding>UTF-8</java.encoding>
 		<java.version>1.8</java.version>
 		<docker.image.prefix>dcatno</docker.image.prefix>
 		<docker.registry />
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.boot.version>1.5.1.RELEASE</spring.boot.version>
 		<elasticsearch.version>2.4.1</elasticsearch.version>
 		<build.profile.id>dev</build.profile.id>
 
-		<!-- Used for specifying tests as integration tests or end-to-end tests. Override in child pom if different -->
-		<integration.test.pattern>**/*IntegrationTest.java, **/*IT.java</integration.test.pattern>
-		<end2end.test.pattern>**/*E2E.java</end2end.test.pattern>
-
-		<!-- Tells weather we should skipIntegrationTests. Note: If this is overwritten
-            in child pom it will also override setting in profiles -->
-		<skipIntegrationTests>true</skipIntegrationTests>
-        <skipUnitTests>true</skipUnitTests>
+		<unittest.category/>
+		<endtoendtest.category/>
+		<loadtest.category/>
+		<integrationtest.category/>
 
 		<maven.exec.skip>false</maven.exec.skip> <!-- default -->
 	</properties>
 
+	<profiles>
+		<profile>
+			<id>dev</id>
+		</profile>
+
+		<profile>
+			<id>unit-test</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<unittest.category>,no.dcat.shared.testcategories.UnitTest</unittest.category>
+			</properties>
+		</profile>
+		<profile>
+			<id>integration-test</id>
+			<properties>
+				<integrationtest.category>,no.dcat.shared.testcategories.IntegrationTest</integrationtest.category>
+			</properties>
+		</profile>
+		<profile>
+			<id>end-to-end-test</id>
+			<properties>
+				<endtoendtest.category>,no.dcat.shared.testcategories.EndToEndTest</endtoendtest.category>
+			</properties>
+		</profile>
+		<profile>
+			<id>load-test</id>
+			<properties>
+				<loadtest.category>,no.dcat.shared.testcategories.LoadTest</loadtest.category>
+			</properties>
+		</profile>
+	</profiles>
+
 	<dependencyManagement>
 		<dependencies>
 			<!--Warn! Do not put spring boot dependencies in dependency Management, since it overrides version management from parent-->
+			<dependency>
+				<groupId>no.dcat</groupId>
+				<artifactId>shared</artifactId>
+				<version>1.2.0</version>
+			</dependency>
+			<dependency>
+				<groupId>no.dcat</groupId>
+				<artifactId>harvester</artifactId>
+				<version>${fdk.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>no.dcat</groupId>
 				<artifactId>harvester-api</artifactId>
@@ -62,15 +101,24 @@
 			</dependency>
 			<dependency>
 				<groupId>no.dcat</groupId>
-				<artifactId>search-api</artifactId>
+				<artifactId>migration</artifactId>
 				<version>${fdk.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>no.dcat</groupId>
-				<artifactId>search</artifactId>
+				<artifactId>reference-data</artifactId>
 				<version>${fdk.version}</version>
 			</dependency>
-
+			<dependency>
+				<groupId>no.dcat</groupId>
+				<artifactId>registration-api</artifactId>
+				<version>${fdk.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>no.dcat</groupId>
+				<artifactId>search-api</artifactId>
+				<version>${fdk.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>com.google.code.gson</groupId>
 				<artifactId>gson</artifactId>
@@ -307,12 +355,30 @@
 			</dependency>
 
 			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-swagger2</artifactId>
+				<version>2.7.0</version>
+			</dependency>
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-swagger-ui</artifactId>
+				<version>2.7.0</version>
+			</dependency>
+
+
+			<dependency>
 				<groupId>net.java.dev.jna</groupId>
 				<artifactId>jna</artifactId>
 				<version>4.2.2</version>
 			</dependency>
-		</dependencies>
 
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.12</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
 
 
 	</dependencyManagement>
@@ -329,26 +395,18 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.19.1</version>
 				<configuration>
-					<excludes>
-						<exclude>${integration.test.pattern}</exclude>
-						<exclude>${end2end.test.pattern}</exclude>
-					</excludes>
+					<groups>java.lang.Exception ${unittest.category} ${endtoendtest.category} ${loadtest.category}</groups> <!-- java.lang.Exception is a hack to make a valid comma-separated list og category classes -->
 					<argLine>${surefireArgLine} -Dfile.encoding=${java.encoding}</argLine>
-                    <skipTests>false</skipTests>
 				</configuration>
 			</plugin>
 			<plugin>
-                <!-- Integration test runner -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>2.19.1</version>
 				<configuration>
-					<includes>
-						<include>${integration.test.pattern}</include>
-					</includes>
-					<skipTests>${skipIntegrationTests}</skipTests>
+					<groups>java.lang.Exception ${integrationtest.category}</groups> <!-- java.lang.Exception is a hack to make a valid comma-separated list og category classes -->
 					<encoding>${java.encoding}</encoding>
-                    <argLine>${failsafeArgLine}</argLine>
+					<argLine>${failsafeArgLine}</argLine>
 				</configuration>
 				<executions>
 					<execution>
@@ -359,43 +417,8 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-                <!-- Aggregates JaCoCo reports to generate Coveralls statistics -->
-				<groupId>org.eluder.coveralls</groupId>
-				<artifactId>coveralls-maven-plugin</artifactId>
-				<version>4.3.0</version>
-                <configuration>
-                    <!-- specify jacoco output files for all java applications explicitly,
-                         due to files being generated in sub-modules.
-                         Reason: see https://github.com/trautonen/coveralls-maven-plugin/issues/64
-                         Note: Javascript modules (registration-react, search) report their
-                         code coverage differently, defined inn package.json -->
-					<jacocoReports>
-						<jacocoReport>applications/end2end-test/target/site/jacoco-it/jacoco.xml</jacocoReport>
-						<jacocoReport>applications/end2end-test/target/site/jacoco-ut/jacoco.xml</jacocoReport>
-						<jacocoReport>applications/gdoc/target/site/jacoco-it/jacoco.xml</jacocoReport>
-						<jacocoReport>applications/gdoc/target/site/jacoco-ut/jacoco.xml</jacocoReport>
-						<jacocoReport>applications/harvester/target/site/jacoco-it/jacoco.xml</jacocoReport>
-						<jacocoReport>applications/harvester/target/site/jacoco-ut/jacoco.xml</jacocoReport>
-						<jacocoReport>applications/harvester-api/target/site/jacoco-it/jacoco.xml</jacocoReport>
-						<jacocoReport>applications/harvester-api/target/site/jacoco-ut/jacoco.xml</jacocoReport>
-						<jacocoReport>applications/migration/target/site/jacoco-it/jacoco.xml</jacocoReport>
-						<jacocoReport>applications/migration/target/site/jacoco-ut/jacoco.xml</jacocoReport>
-						<jacocoReport>applications/registration-api/target/site/jacoco-it/jacoco.xml</jacocoReport>
-						<jacocoReport>applications/registration-api/target/site/jacoco-ut/jacoco.xml</jacocoReport>
-						<jacocoReport>applications/registration-auth/target/site/jacoco-it/jacoco.xml</jacocoReport>
-						<jacocoReport>applications/registration-auth/target/site/jacoco-ut/jacoco.xml</jacocoReport>
-						<jacocoReport>applications/registration-validator/target/site/jacoco-it/jacoco.xml</jacocoReport>
-						<jacocoReport>applications/registration-validator/target/site/jacoco-ut/jacoco.xml</jacocoReport>
-						<jacocoReport>applications/search-api/target/site/jacoco-it/jacoco.xml</jacocoReport>
-						<jacocoReport>applications/search-api/target/site/jacoco-ut/jacoco.xml</jacocoReport>
-						<jacocoReport>libraries/datastore/target/site/jacoco-it/jacoco.xml</jacocoReport>
-						<jacocoReport>libraries/datastore/target/site/jacoco-ut/jacoco.xml</jacocoReport>
-						<jacocoReport>libraries/shared/target/site/jacoco-it/jacoco.xml</jacocoReport>
-						<jacocoReport>libraries/shared/target/site/jacoco-ut/jacoco.xml</jacocoReport>
-					</jacocoReports>
-                </configuration>
-			</plugin>
+
+
 			<plugin>
                 <!-- Generates coverage reports from unit and integration tests -->
 				<groupId>org.jacoco</groupId>
@@ -516,40 +539,5 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>dev</id>
-		</profile>
-		<profile>
-			<id>integration-test</id>
-			<properties>
-				<!-- Used to locate the profile specific configuration file. -->
-				<build.profile.id>integration-test</build.profile.id>
-				<!-- Unit and integration tests are run, to get complete tesstcoverage statistics. -->
-				<integration.test.pattern>**/*IntegrationTest.java, **/*IT.java</integration.test.pattern>
-				<skipIntegrationTests>false</skipIntegrationTests>
-				<skipUnitTests>true</skipUnitTests>
-			</properties>
-		</profile>
-		<profile>
-			<id>end-to-end-test</id>
-			<properties>
-				<!-- Used to locate the profile specific configuration file. -->
-				<build.profile.id>end-to-end-test</build.profile.id>
-
-				<!-- Maven has no distinct phase for end-to-end tests
-				     and Failsafe does not distinguish between integration
-				     and end to end tests by default. Therefore distinguish
-				     with naming convention E2E for end-to-end tests -->
-				<integration.test.pattern>**/*E2E.java</integration.test.pattern>
-				<!-- Only integration tests are run. -->
-				<skipIntegrationTests>false</skipIntegrationTests>
-				<skipUnitTests>true</skipUnitTests>
-			</properties>
-		</profile>
-	</profiles>
-
-
 
 </project>

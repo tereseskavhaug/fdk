@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render SearchBox correctly 1`] = `
+<div
+  className="row pt-5 pb-5"
+>
+  <div
+    className="col-12 col-lg-8 offset-lg-2 fdk-search-flex"
+  >
+    <div
+      className="d-inline d-lg-none"
+    >
+      <button
+        className="fdk-button fdk-button-filter"
+        onClick={[MockFunction]}
+        type="button"
+      >
+        Filter
+      </button>
+    </div>
+    <div
+      className="fdk-search-box"
+    >
+      <form
+        onSubmit={[Function]}
+      >
+        <label
+          htmlFor="searchBox"
+        >
+          <input
+            aria-label="Search for datasets..."
+            className="fdk-search"
+            name="searchBox"
+            onChange={[Function]}
+            placeholder="Search for datasets..."
+            type="search"
+            value="enhetsregister"
+          />
+        </label>
+      </form>
+    </div>
+    <button
+      className="fdk-button-search btn btn-lg"
+      onClick={[Function]}
+      type="button"
+    >
+      <i
+        className="fa fa-search mr-2"
+      />
+      Search
+    </button>
+  </div>
+  <div
+    className="col-md-12 text-center"
+  >
+    <CustomHitsStats
+      countApis={null}
+      countDatasets={100}
+      countTerms={10}
+      filteringOrTextSearchPerformed={false}
+    />
+  </div>
+</div>
+`;

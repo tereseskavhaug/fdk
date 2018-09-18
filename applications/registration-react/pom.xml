@@ -6,11 +6,20 @@
     <parent>
         <groupId>no.dcat</groupId>
         <artifactId>applications</artifactId>
-        <version>0.2.4-SNAPSHOT</version>
+        <version>1.0</version>
     </parent>
 
     <artifactId>registration-react</artifactId>
     <description>Registration</description>
+    <version>1.0.0</version>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <!-- only filter dist -->

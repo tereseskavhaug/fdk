@@ -4,9 +4,11 @@ import com.google.gson.Gson;
 import no.dcat.model.Catalog;
 import no.dcat.service.CatalogRepository;
 import no.dcat.shared.admin.DcatSourceDto;
+import no.dcat.shared.testcategories.IntegrationTest;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @AutoConfigureMockMvc
+@Category(IntegrationTest.class)
 public class CatalogControllerIT {
     private static Logger logger = LoggerFactory.getLogger(CatalogControllerIT.class);
 
@@ -201,6 +204,34 @@ public class CatalogControllerIT {
                 .andExpect(status().isOk());
 
     }
+
+
+    @Test
+    @WithUserDetails("03096000854")
+    public void updateCatalogWithPutRunsOK() throws Exception {
+        listCatalogToCreateCatalogs();
+
+        Catalog catalog = catalogRepository.findOne("910244132");
+
+        // change title
+        Map<String, String> title2 = new HashMap<>();
+        title2.put("en", "aTest");
+        catalog.setTitle(title2);
+
+        mockMvc
+                .perform(
+                        MockMvcRequestBuilders
+                                .put("/catalogs/910244132", catalog)
+                                .content(asJsonString(catalog))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().string("{\"id\":\"910244132\",\"uri\":\"http://brreg.no/catalogs/910244132\",\"title\":{\"en\":\"aTest\"},\"description\":{},\"publisher\":{\"uri\":\"http://data.brreg.no/enhetsregisteret/enhet/910244132\",\"id\":\"910244132\",\"name\":\"RAMSUND OG ROGNAN REVISJON\"}}"))
+                .andExpect(status().isOk());
+
+    }
+
+
+
+
 
     @Test
     @WithUserDetails("03096000854")

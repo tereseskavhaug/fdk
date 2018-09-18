@@ -54,6 +54,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -91,7 +92,7 @@ public class ElasticSearchResultHandler implements CrawlerResultHandler {
     String hostename;
     int port;
     String clustername;
-    private final String themesHostname;
+    private final String referenceDataUrl;
     String httpUsername;
     String httpPassword;
     String notificationEmailSender;
@@ -107,17 +108,17 @@ public class ElasticSearchResultHandler implements CrawlerResultHandler {
      * @param hostname               host name where elasticsearch cluster is found
      * @param port                   port for connection to elasticserach cluster. Usually 9300
      * @param clustername            Name of elasticsearch cluster
-     * @param themesHostname         hostname for reference-data service whitch provides themes service
+     * @param referenceDataUrl         hostname for reference-data service whitch provides themes service
      * @param httpUsername           username used for posting data to reference-data service
      * @param httpPassword           password used for posting data to reference-data service
      * @param notifactionEmailSender email address used as from: address in emails with validation results
      */
-    public ElasticSearchResultHandler(String hostname, int port, String clustername, String themesHostname, String httpUsername, String httpPassword,
+    public ElasticSearchResultHandler(String hostname, int port, String clustername, String referenceDataUrl, String httpUsername, String httpPassword,
                                       String notifactionEmailSender, EmailNotificationService emailNotificationService) {
         this.hostename = hostname;
         this.port = port;
         this.clustername = clustername;
-        this.themesHostname = themesHostname;
+        this.referenceDataUrl = referenceDataUrl;
         this.httpUsername = httpUsername;
         this.httpPassword = httpPassword;
         this.notificationEmailSender = notifactionEmailSender;
@@ -127,8 +128,8 @@ public class ElasticSearchResultHandler implements CrawlerResultHandler {
     }
 
 
-    public ElasticSearchResultHandler(String hostname, int port, String clustername, String themesHostname, String httpUsername, String httpPassword) {
-        this(hostname, port, clustername, themesHostname, httpUsername, httpPassword, DEFAULT_EMAIL_SENDER, null);
+    public ElasticSearchResultHandler(String hostname, int port, String clustername, String referenceDataUrl, String httpUsername, String httpPassword) {
+        this(hostname, port, clustername, referenceDataUrl, httpUsername, httpPassword, DEFAULT_EMAIL_SENDER, null);
     }
 
     Elasticsearch createElasticsearch() {
@@ -176,7 +177,7 @@ public class ElasticSearchResultHandler implements CrawlerResultHandler {
     }
 
     DcatReader getReader(Model model) {
-        return new DcatReader(model, themesHostname, httpUsername, httpPassword);
+        return new DcatReader(model, referenceDataUrl, httpUsername, httpPassword);
     }
 
 
@@ -198,24 +199,23 @@ public class ElasticSearchResultHandler implements CrawlerResultHandler {
 
         DcatReader dcatReader = getReader(model);
 
-        List<Dataset> validDatasets = dcatReader.getDatasets();
+        List<Dataset> datasets = dcatReader.getDatasets();
         List<Catalog> catalogs = dcatReader.getCatalogs();
 
         Set<String> datasetsInSource = getSourceDatasetUris(model);
 
-        if (validDatasets == null || validDatasets.isEmpty()) {
+        if (datasets == null || datasets.isEmpty()) {
 
-            logger.error("No valid datasets to index. Found {} non valid datasets at url {}",
+            logger.error("No datasets to index. Found {} non valid datasets at url {}",
                     datasetsInSource.size(),
                     dcatSource.getUrl());
         } else {
-            logger.info("Processing {} valid datasets. {} non valid datasets were ignored",
-                    validDatasets.size(), datasetsInSource.size() - validDatasets.size());
+            logger.info("Processing {} datasets", datasets.size());
 
             Gson gson = getGson();
 
-            updateDatasets(dcatSource, model, elasticsearch, validationResults, gson, validDatasets, catalogs);
-            updateSubjects(validDatasets, elasticsearch, gson);
+            updateDatasets(dcatSource, model, elasticsearch, validationResults, gson, datasets, catalogs);
+            updateSubjects(datasets, elasticsearch, gson);
         }
 
         stopHarvestLogAndReport(dcatSource, validationResults);
@@ -264,6 +264,39 @@ public class ElasticSearchResultHandler implements CrawlerResultHandler {
         }
     }
 
+    String removeDuplicatedLines(String input) {
+        Map<String,Integer> countThemAll = new HashMap<>();
+
+        List<String> result = new ArrayList<>();
+        String[] lines = input.split("\r\n|\r|\n");
+        Set<String> uniqueLines = new HashSet<>();
+
+        Arrays.stream(lines).forEach((String line) -> {
+            if (countThemAll.containsKey(line)) {
+                Integer counter = countThemAll.get(line);
+                countThemAll.put(line, ++counter);
+            } else {
+                countThemAll.put(line, 0);
+            }
+            if (!uniqueLines.contains(line)) {
+
+                result.add(line);
+                uniqueLines.add(line);
+            }
+        });
+
+        logger.info("Original {} lines, {} unique lines, removed {} duplicated lines", lines.length, uniqueLines.size(), lines.length - uniqueLines.size());
+
+        return result.stream().map(line -> {
+            Integer counter = countThemAll.get(line);
+            if (counter > 1) {
+                return line + " (Occurs " + counter + " times)";
+            } else {
+                return line;
+            }
+        }).collect(Collectors.joining("\n"));
+    }
+
     void stopHarvestLogAndReport(DcatSource dcatSource, List<String> validationResults) {
         if (enableHarvestLog ) {
             try {
@@ -272,11 +305,11 @@ public class ElasticSearchResultHandler implements CrawlerResultHandler {
                 rootLogger.detachAppender(fileAppender);
                 fileAppender.stop();
 
-                logger.info("stopping harvesterlogging");
+                logger.info("stopped harvesterlogging");
 
                 String dcatSyntaxValidation = validationResults != null ? validationResults.stream().map(Object::toString).collect(Collectors.joining("\n")) : "";
                 //get contents from harvest log file
-                String semanticValidation = new String(Files.readAllBytes(temporarylogFile));
+                String semanticValidation = removeDuplicatedLines(new String(Files.readAllBytes(temporarylogFile)));
 
                 Files.delete(temporarylogFile);
 
@@ -313,14 +346,14 @@ public class ElasticSearchResultHandler implements CrawlerResultHandler {
 
     private void updateDatasets(DcatSource dcatSource, Model model, Elasticsearch elasticsearch,
                                 List<String> validationResults, Gson gson,
-                                List<Dataset> validDatasets, List<Catalog> catalogs) {
+                                List<Dataset> datasetsToImport, List<Catalog> catalogs) {
 
         logger.debug("Preparing bulkRequest");
         BulkRequestBuilder bulkRequest = elasticsearch.getClient().prepareBulk();
 
         Date harvestTime = new Date();
         logger.info("Found {} catalogs in dcat source {}", catalogs.size(), dcatSource.getId());
-        logger.info("Found {} syntactic valid datasets in dcat source {}", validDatasets.size(), dcatSource.getId());
+        logger.info("Found {} datasets that can be imported into the data catalog", datasetsToImport.size());
 
         for (Catalog catalog : catalogs) {
 
@@ -338,7 +371,7 @@ public class ElasticSearchResultHandler implements CrawlerResultHandler {
 
             ChangeInformation stats = new ChangeInformation();
             logger.debug("stats: " + stats.toString());
-            for (Dataset dataset : validDatasets.stream().filter(d -> d.getCatalog().getUri().equals(catalog.getUri())).collect(Collectors.toList())) {
+            for (Dataset dataset : datasetsToImport.stream().filter(d -> d.getCatalog().getUri().equals(catalog.getUri())).collect(Collectors.toList())) {
 
                 catalogRecord.getValidDatasetUris().add(dataset.getUri());
 

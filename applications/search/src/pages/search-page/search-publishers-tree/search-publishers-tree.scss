@@ -1,0 +1,21 @@
+@import '../../../../node_modules/designsystemet/fdk-designsystem-bootstrap4/scss/colors.scss';
+
+.search-filter-publisher {
+
+  .tree-view {
+    overflow-x: hidden;
+    .tree-view_item {
+      border-top: none;
+      color: $color1;
+      white-space: nowrap;
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+    .tree-view_children {
+      margin-left: 32px;
+    }
+  }
+  .checkbox.indent {
+    margin-left: 19px;
+  }
+}

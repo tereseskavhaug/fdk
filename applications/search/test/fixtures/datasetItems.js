@@ -128,6 +128,160 @@ export default [
           sort: ['nasjonal', 'a', 1523600787000]
         }
       ]
+    },
+    aggregations: {
+      missingFirstHarvested: {
+        count: 0
+      },
+      subjectsCount: {
+        doc_count_error_upper_bound: 0,
+        sum_other_doc_count: 0,
+        buckets: [
+          {
+            key: 'Ukjent',
+            count: 1
+          }
+        ]
+      },
+      publisherCount: {
+        doc_count_error_upper_bound: 0,
+        sum_other_doc_count: 0,
+        buckets: [
+          {
+            key: 'RAMSUND OG ROGNAN REVISJON',
+            count: 1
+          }
+        ]
+      },
+      orgPath: {
+        doc_count_error_upper_bound: 0,
+        sum_other_doc_count: 0,
+        buckets: [
+          {
+            key: '/ANNET',
+            count: 1,
+            children: [
+              {
+                key: '/ANNET/910244132',
+                count: 1,
+                hasParent: true,
+                children: []
+              }
+            ]
+          },
+          {
+            key: '/ANNET/910244132',
+            count: 1,
+            hasParent: true,
+            children: []
+          }
+        ]
+      },
+      accessRightsCount: {
+        doc_count_error_upper_bound: 0,
+        sum_other_doc_count: 0,
+        buckets: [
+          {
+            key: 'PUBLIC',
+            count: 1
+          }
+        ]
+      },
+      theme_count: {
+        doc_count_error_upper_bound: 0,
+        sum_other_doc_count: 0,
+        buckets: [
+          {
+            key: 'AGRI',
+            count: 1
+          },
+          {
+            key: 'ECON',
+            count: 1
+          },
+          {
+            key: 'EDUC',
+            count: 1
+          },
+          {
+            key: 'ENER',
+            count: 1
+          },
+          {
+            key: 'ENVI',
+            count: 1
+          },
+          {
+            key: 'GOVE',
+            count: 1
+          },
+          {
+            key: 'HEAL',
+            count: 1
+          },
+          {
+            key: 'INTR',
+            count: 1
+          },
+          {
+            key: 'JUST',
+            count: 1
+          },
+          {
+            key: 'REGI',
+            count: 1
+          }
+        ]
+      },
+      lastChanged: {
+        buckets: {
+          last7days: {
+            count: 1
+          },
+          last30days: {
+            count: 1
+          },
+          last365days: {
+            count: 1
+          }
+        }
+      },
+      missingLastChanged: {
+        count: 0
+      },
+      firstHarvested: {
+        buckets: {
+          last7days: {
+            count: 1
+          },
+          last30days: {
+            count: 1
+          },
+          last365days: {
+            count: 1
+          }
+        }
+      },
+      spatial: {
+        doc_count_error_upper_bound: 0,
+        sum_other_doc_count: 0,
+        buckets: [
+          {
+            key: 'Ukjent',
+            count: 1
+          }
+        ]
+      },
+      provenanceCount: {
+        doc_count_error_upper_bound: 0,
+        sum_other_doc_count: 0,
+        buckets: [
+          {
+            key: 'VEDTAK',
+            count: 1
+          }
+        ]
+      }
     }
   }
 ];

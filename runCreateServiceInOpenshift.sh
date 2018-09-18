@@ -106,14 +106,16 @@ openshiftProject=fellesdatakatalog-$environment
 if [ $environment = ppe ] || [ $environment = pp2 ]|| [ $environment = prd ]
 then
     #run on prod cluster
-    cluster=ose-pc
+    cluster=paas
 else
     #run on non-prod cluster if environment is ut1, st1, st2, tt1, pp2
-    cluster=ose-npc
+    cluster=paas-nprd
 fi
 
 #configuration - ppe and prd environmens should use Altinn and Idporten prod environment
 # others, including pp2 use test environments
+# Remark: Files in conf/ directory must be copied manually into the environment
+# as they cannot be stored in the public github repository
 if [ $environment = ppe ] || [ $environment = prd ]
 then
     #point to Altinn prod environment
@@ -182,6 +184,18 @@ then
     # todo
     echo Fuseki deploy not implemented yet
 
+elif [ $service = elasticsearch-copy ]
+then
+    if [ $deploymode = recreateServices ]
+    then
+        profile=prod
+        createOpenshiftService elasticsearch-copy
+    else
+        # deploymentmode = onlyDeployImages
+        deployNewDockerImage elasticsearch-copy
+    fi
+
+
 elif [ $service = registration-react ]
 then
     if [ $deploymode = recreateServices ]
@@ -193,20 +207,17 @@ then
         if [ $environment = ppe ]
         then
             oc env dc/registration-react REG_API_URL=https://$registrationGuiExternalAddress/ \
-            QUERY_SERVICE_URL=/reference-data \
             PORT=4300 \
             NODE_ENV=production
 
         elif [ $environment = tt1 ]
         then
             oc env dc/registration-react REG_API_URL=https://$registrationGuiExternalAddress/ \
-            QUERY_SERVICE_URL=/reference-data \
             PORT=4300 \
             NODE_ENV=production
 
         else
             oc env dc/registration-react REG_API_URL=https://reg-gui-new-fellesdatakatalog-$environment.$cluster.brreg.no/ \
-            QUERY_SERVICE_URL=/reference-data \
             PORT=4300 \
             NODE_ENV=production
         fi
@@ -228,6 +239,7 @@ then
 
         #mount persistent storage volumes - midlertidig kommentert ut for reference-data, virker ikke i git bash
         #oc volumes dc/reference-data --add --type=persistentVolumeClaim --claim-name=fdk-tdb --mount-path=/tdb
+        echo Remember to mount /tdb volume manually
 
         #create secure route for reference-data
         oc create route edge --service=reference-data --hostname=reference-data-fellesdatakatalog-$environment.$cluster.brreg.no
@@ -249,17 +261,6 @@ then
     else
         # deploymentmode = onlyDeployImages
         deployNewDockerImage registration-auth
-    fi
-
-elif [ $service = registration-validator ]
-then
-    if [ $deploymode = recreateServices ]
-    then
-        profile=prod
-        createOpenshiftService registration-validator
-    else
-        # deploymentmode = onlyDeployImages
-        deployNewDockerImage registration-validator
     fi
 
 elif [ $service = harvester-api ]
@@ -332,23 +333,12 @@ then
     then
         profile=prod
         createOpenshiftService search
+        oc env dc/search NODE_ENV=production
         exposeService search
         oc expose dc/search --port=3000
     else
         # deploymentmode = onlyDeployImages
         deployNewDockerImage search
-    fi
-
-elif [ $service = gdoc ]
-then
-    if [ $deploymode = recreateServices ]
-    then
-        profile=prod
-        createOpenshiftService gdoc
-        exposeService gdoc
-    else
-        # deploymentmode = onlyDeployImages
-        deployNewDockerImage gdoc
     fi
 
 elif [ $service = harvester ]
@@ -359,8 +349,8 @@ then
         createOpenshiftService harvester
 
         oc env dc/harvester \
-            harvester_adminUsername=changeme \
-            harvester_adminPassword=changeme
+            harvester_adminUsername=test_admin \
+            harvester_adminPassword=password
 
         exposeService harvester
     else
@@ -383,6 +373,23 @@ then
     else
         # deploymentmode = onlyDeployImages
         deployNewDockerImage search-api
+    fi
+
+elif [ $service = api-cat ]
+then
+    if [ $deploymode = recreateServices ]
+    then
+        profile=prod
+        createOpenshiftService api-cat
+
+        #create secure route for search api
+        oc create route edge --service=api-cat --hostname=api-cat-fellesdatakatalog-$environment.$cluster.brreg.no
+        oc label route api-cat --overwrite=true \
+            environmentTag=$environmentTag \
+            environmentDate=$dateTag
+    else
+        # deploymentmode = onlyDeployImages
+        deployNewDockerImage api-cat
     fi
 
 elif [ $service = nginx-registration ]

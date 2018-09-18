@@ -8,8 +8,10 @@ prefix owl: <http://www.w3.org/2002/07/owl#>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 prefix vcard: <http://www.w3.org/2006/vcard/ns#>
 prefix er: <http://data.brreg.no/meta/>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+prefix schema: <http://schema.org/>
 
-DESCRIBE ?publisher ?dataset ?distribution ?catalog ?contact
+DESCRIBE ?publisher ?dataset ?distribution ?catalog ?contact ?temporal ?spatial
 WHERE {
   ?catalog a dcat:Catalog;
   dct:publisher ?publisher;
@@ -17,6 +19,8 @@ WHERE {
 
   OPTIONAL {?dataset dcat:distribution ?distribution}
   OPTIONAL {?dataset dcat:contactPoint ?contact}
+  OPTIONAL {?dataset dct:temporal ?temporal}
+  OPTIONAL {?dataset dct:spatial ?spatial}
 
   FILTER (?catalog = <%s>)
 

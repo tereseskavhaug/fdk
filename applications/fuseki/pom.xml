@@ -3,21 +3,29 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>fuseki</artifactId>
+    <version>1.0.0</version>
 	
     <parent>
         <groupId>no.dcat</groupId>
         <artifactId>applications</artifactId>
-        <version>0.2.4-SNAPSHOT</version>
+        <version>1.0</version>
     </parent>
 
-	<build>
-	<plugins>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-		<plugin>
-            <groupId>com.spotify</groupId>
-            <artifactId>docker-maven-plugin</artifactId>
-		</plugin>
-    </plugins>
+	<build>
+        <plugins>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
     </build>
-	
+
 </project>

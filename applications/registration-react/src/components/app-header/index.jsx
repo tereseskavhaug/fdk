@@ -3,14 +3,13 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Dropdown, DropdownToggle, DropdownMenu } from 'reactstrap';
 
-import {
-  fetchUserIfNeeded
-} from '../../actions/index';
+import { fetchUserIfNeeded } from '../../actions/index';
 import localization from '../../utils/localization';
-import '../../assets/style/main.scss';
+import '../../assets/style/bootstrap-override.scss';
+import './styles';
 import './index.scss';
 
-class Header extends React.Component {
+export class Header extends React.Component {
   constructor(props) {
     super(props);
     this.toggle = this.toggle.bind(this);
@@ -37,61 +36,72 @@ class Header extends React.Component {
             href={`${location.pathname}#content`}
             aria-hidden="true"
           >
-            Hopp til hovedinnhold
+            {localization.app.skipLink}
           </a>
         </div>
         <div id="skip-link-wrap">
-          <a id="skip-link" href={`${location.pathname}#content`}>Hopp til hovedinnhold</a>
-        </div>
-        <div className="fdk-header-beta">
-          {localization.beta.header}
-          <br className="d-md-none" />
-          {localization.beta.first}
-          <a className="white-link" href="mailto:fellesdatakatalog@brreg.no">{localization.beta.second}</a> {localization.beta.last}
+          <a id="skip-link" href={`${location.pathname}#content`}>
+            {localization.app.skipLink}
+          </a>
         </div>
         <div className="fdk-header">
           <div className="container">
             <div className="row">
               <div className="col-6 col-md-4">
-                <a
-                  title="Link til Felles datakatalog"
-                  href="/"
-                >
-                  <span className="uu-invisible" aria-hidden="false">Gå til forside</span>
-                  <img className="fdk-logo" src="/static/img/fdk-logo@2x.png" alt="Logo for Felles datakatalog" />
+                <a title="Link til Felles datakatalog" href="/">
+                  <span className="uu-invisible" aria-hidden="false">
+                    {localization.app.navigateFrontpage}
+                  </span>
+                  <img
+                    className="fdk-logo"
+                    src="/static/img/fdk-logo@2x.png"
+                    alt="Logo for Felles datakatalog"
+                  />
                 </a>
               </div>
 
               <div className="col-6 col-md-4 d-flex justify-content-center align-items-center">
-                <span><strong>Registrering</strong></span>
+                <span>
+                  <strong>{localization.app.title}</strong>
+                </span>
               </div>
               <div className="col-md-4 d-flex align-items-center fdk-header-text_items justify-content-end">
-                {userItem && userItem.name &&
-                <div className="fdk-margin-right-double">
-                  <i className="fa fa-user fdk-fa-left fdk-color-cta3" />
-                  {userItem.name}
-                </div>
-                }
                 {userItem &&
-                (
-                  <div className="fdk-margin-right-double fdk-auth-link">
-                    <a href={`${window.location.origin}/logout`}>{localization.app.logOut}</a>
+                  userItem.name && (
+                    <div className="mr-4">
+                      <i className="fa fa-user fdk-fa-left fdk-color-cta3" />
+                      {userItem.name}
+                    </div>
+                  )}
+                {userItem && (
+                  <div className="mr-4 fdk-auth-link">
+                    <a href={`${window.location.origin}/logout`}>
+                      {localization.app.logOut}
+                    </a>
                   </div>
                 )}
-                {!userItem &&
-                (
-                  <div className="fdk-margin-right-double fdk-auth-link">
-                    <a href={`${window.location.origin  }/login`}>{localization.app.logIn}</a>
+                {!userItem && (
+                  <div className="mr-4 fdk-auth-link">
+                    <a href={`${window.location.origin}/login`}>
+                      {localization.app.logIn}
+                    </a>
                   </div>
                 )}
 
                 <div>
-                  <Dropdown className="btn-group-default" isOpen={this.state.dropdownOpen} toggle={this.toggle}>
-                    <DropdownToggle className="fdk-button fdk-button-default fdk-button-menu dropdown-toggle btn-default" caret>
-                      <i className="fa fa-bars fdk-fa-dark fdk-fa-left" />
-                      <span>Meny</span>
+                  <Dropdown
+                    className="btn-group-default"
+                    isOpen={this.state.dropdownOpen}
+                    toggle={this.toggle}
+                  >
+                    <DropdownToggle
+                      className="fdk-button fdk-button-menu"
+                      caret
+                      color="primary"
+                    >
+                      <span>{localization.menu.title}</span>
                     </DropdownToggle>
-                    <DropdownMenu>
+                    <DropdownMenu className="fdk-dropdownmenu">
                       <a
                         className="dropdown-item"
                         title="Veileder"
@@ -99,9 +109,8 @@ class Header extends React.Component {
                         rel="noopener noreferrer"
                         href="https://doc.difi.no/data/veileder-for-beskrivelse-av-datasett/"
                       >
-                        Veileder
+                        {localization.menu.guide}
                       </a>
-
 
                       <a
                         className="dropdown-item"
@@ -110,7 +119,7 @@ class Header extends React.Component {
                         rel="noopener noreferrer"
                         href="https://doc.difi.no/dcat-ap-no/"
                       >
-                        Standard
+                        {localization.menu.standard}
                       </a>
                       <a
                         className="dropdown-item"
@@ -119,7 +128,7 @@ class Header extends React.Component {
                         rel="noopener noreferrer"
                         href="https://fellesdatakatalog.brreg.no"
                       >
-                        Felles datakatalog
+                        {localization.menu.fdk}
                       </a>
                     </DropdownMenu>
                   </Dropdown>
@@ -134,17 +143,18 @@ class Header extends React.Component {
 }
 
 Header.defaultProps = {
-
+  userItem: null
 };
 
 Header.propTypes = {
-  dispatch: PropTypes.func.isRequired
+  dispatch: PropTypes.func.isRequired,
+  userItem: PropTypes.object
 };
 
 function mapStateToProps({ user }) {
   const { userItem } = user || {
     userItem: null
-  }
+  };
 
   return {
     userItem

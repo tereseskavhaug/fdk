@@ -2,7 +2,7 @@
 
 Docker image: [dcatno/harvester](https://hub.docker.com/r/dcatno/harvester/)
 Base image: [openjdk:8-jre](https://hub.docker.com/_/openjdk/)
-Source: [Dockerfile](https://github.com/Altinn/fdk/blob/master/applications/harvester/src/main/docker/Dockerfile)
+Source: [Dockerfile](https://github.com/Informasjonsforvaltning/fdk/blob/master/applications/harvester/src/main/docker/Dockerfile)
 
 ## Overview
 The harvester administration application. It allows users to register 
@@ -10,13 +10,13 @@ external data catalogs (data sources) to be harvested at regular intervals.
 
 The harvester currently runs once a day at 1am. Harvests can also be triggered manually.
 
-##Technologies/frameworks
+## Technologies/frameworks
 * Java
 * Spring Boot v. 1.5.1
 * Apache Jena v.3.3.0
 * Thymeleaf for user interface
 
-##Architecture
+## Architecture
 The harvester module consists of to subcomponents:
 * REST controllers (DcatAdminRestController and UserAdminRestController) supporting the following operations:
     * GET /api/admin/dcat-sources
@@ -33,7 +33,7 @@ The harvester module consists of to subcomponents:
 * A simple web user interface (DcatAdminController) for managing users and catalogs to be harvested.
   This interface calls operations in the REST controller. The user interface has a simple authentication mechanism.
 
-##Dependencies
+## Dependencies
 The harvester module is dependent on the following other modules:
 * Harvester-api (REST api)
     * Harvests are triggered by calling a rest api on the harvester-api module:
@@ -43,9 +43,6 @@ The harvester module is dependent on the following other modules:
     * Information about users and data catalogs are stored in Fuseki database admin
     * Log information about harvests are retrieved from Fuseki database admin
 * Elasticsearch (api)
-    * 
-* Kibana (optional) (REST api)
-    * Visualisation for harvest log information
 * Library: no.dcat.datastore
     * Provides Java interfaces for communicating with Elasticsearch and Fuseki
 

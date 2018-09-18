@@ -1,16 +1,26 @@
 package no.dcat.harvester.clean;
 
+import no.dcat.shared.testcategories.UnitTest;
+import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
+@Category(UnitTest.class)
 public class HtmlCleanerTest {
 
     @Test
     public void clean_noHtml_sameText() throws Exception {
         String testString = "Test";
         assertThat(HtmlCleaner.clean(testString), is(testString));
+    }
+
+    @Test
+    public void nullInputResultsInNullReturned() {
+        assertThat(HtmlCleaner.clean(null), is(Matchers.nullValue()));
+        assertThat(HtmlCleaner.cleanAllHtmlTags(null), is(Matchers.nullValue()));
     }
 
     @Test

@@ -1,10 +1,13 @@
 package no.dcat.portal.query;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.Data;
 import no.dcat.shared.Dataset;
 import no.dcat.shared.Publisher;
@@ -17,8 +20,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -36,10 +42,12 @@ public class PublisherQueryService extends ElasticsearchService {
      * @return The complete elasticsearch response on Json-format is returned..
      */
     @CrossOrigin
-    @ApiOperation(value = "query a publisher",
+    @ApiOperation(value = "Query for publishers.",
             notes = "Returns the elasticsearch response with matching publishers", response = Publisher.class)
     @RequestMapping(value = QUERY_PUBLISHER, method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<String> publishers(@RequestParam(value = "q", defaultValue = "", required = false) String query) {
+    public ResponseEntity<String> publishers(
+            @ApiParam("A query string to match a publisher name")
+            @RequestParam(value = "q", defaultValue = "", required = false) String query) {
         logger.info("/publisher query: {}", query);
 
         ResponseEntity<String> jsonError = initializeElasticsearchTransportClient();
@@ -70,7 +78,7 @@ public class PublisherQueryService extends ElasticsearchService {
      * @return orgPath and name of all publisher with children in a tree as Json-format is returned..
      */
     @CrossOrigin
-    @ApiOperation(value = "returns all publisher in a hierary",
+    @ApiOperation(value = "Returns all publishers in a hierarchy.",
             response = PublisherHit.class)
     @RequestMapping(value = QUERY_PUBLISHER_HIERARCHY, method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<Hits> publisherNames() {
@@ -86,12 +94,19 @@ public class PublisherQueryService extends ElasticsearchService {
         /**
          * Build flat list of PublisherHit from jsonArray.
          */
+
+        Type type = new TypeToken<Map<String,String>>(){}.getType();
+
         for (JsonElement element : jsonArray) {
             JsonObject jsonObject = element.getAsJsonObject().get("_source").getAsJsonObject();
+
             PublisherHit publisherHit = new PublisherHit();
             publisherHit.children = new ArrayList<>();
             publisherHit.name = jsonObject.get("name").getAsString();
             publisherHit.orgPath = jsonObject.get("orgPath").getAsString();
+            if (jsonObject.get("prefLabel") != null) {
+                publisherHit.prefLabel = gson.fromJson(jsonObject.get("prefLabel").toString(), type);
+            }
             publisherHitList.add(publisherHit);
         }
 
@@ -201,8 +216,10 @@ public class PublisherQueryService extends ElasticsearchService {
      * Represents a publisher and its children.
      */
     @Data
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public class PublisherHit implements Comparable<PublisherHit> {
         String name, orgPath;
+        Map<String,String> prefLabel;
         List<PublisherHit> children;
 
         /**

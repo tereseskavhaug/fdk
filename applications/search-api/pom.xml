@@ -3,12 +3,13 @@
     <parent>
         <artifactId>applications</artifactId>
         <groupId>no.dcat</groupId>
-        <version>0.2.4-SNAPSHOT</version>
+        <version>1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>search-api</artifactId>
     <packaging>jar</packaging>
+    <version>1.0.0</version>
 
     <dependencies>
         <!-- må være med for å kjøre i intellij -->
@@ -49,9 +50,10 @@
         <dependency>
             <groupId>no.dcat</groupId>
             <artifactId>datastore</artifactId>
-            <version>0.2.4-SNAPSHOT</version>
+            <version>1.0.2</version>
         </dependency>
 
+        <!-- 2.8 does not work at all. Same problem as 2.7 in 2.6, 2.5. Could't get 2.2.2 to work -->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
@@ -61,6 +63,12 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
             <version>2.7.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.10.3</version>
         </dependency>
     </dependencies>
 

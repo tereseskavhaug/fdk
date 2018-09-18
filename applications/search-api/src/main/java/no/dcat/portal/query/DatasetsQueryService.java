@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import no.dcat.datastore.domain.dcat.builders.DcatBuilder;
 import no.dcat.shared.Dataset;
-import no.dcat.shared.SkosConcept;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -34,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Arrays;
 import java.util.Date;
 
 
@@ -44,6 +44,7 @@ import java.util.Date;
  */
 @RestController
 public class DatasetsQueryService extends ElasticsearchService {
+    public static final String UNKNOWN = "Ukjent";
     private static Logger logger = LoggerFactory.getLogger(DatasetsQueryService.class);
 
     public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
@@ -58,7 +59,6 @@ public class DatasetsQueryService extends ElasticsearchService {
     public static final String FIELD_SUBJECTS_PREFLABEL = "subject.prefLabel.no";
 
     public static final String TERMS_THEME_COUNT = "theme_count";
-    public static final String TERMS_PUBLISHER_COUNT = "publisherCount";
     public static final String TERMS_ACCESS_RIGHTS_COUNT = "accessRightsCount";
     public static final String TERMS_SUBJECTS_COUNT = "subjectsCount";
     public static final String AGGREGATE_DATASET = "/aggregateDataset";
@@ -78,21 +78,10 @@ public class DatasetsQueryService extends ElasticsearchService {
      * Compose and execute an elasticsearch query on dcat based on the input parameters.
      * <p>
      *
-     * @param query         The search query to be executed as defined in
-     *                      https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html
-     *                      The search is performed on the fileds titel, keyword, description and publisher.name.
-     * @param theme         Narrows the search to the specified theme. ex. GOVE
-     * @param publisher     Narrows the search to the specified publisher. ex. UTDANNINGSDIREKTORATET
-     * @param accessRights  Narrows the search to the specified theme. ex. RESTRICTED
-     * @param from          The starting index (starting from 0) of the sorted hits that is returned.
-     * @param size          The number of hits that is returned. Max number is 100.
-     * @param lang          The language of the query string. Used for analyzing the query-string.
-     * @param sortfield     Defines that field that the search result shall be sorted on. Default is source
-     * @param sortdirection Defines the direction of the sort, ascending or descending.
      * @return List of  elasticsearch records.
      */
     @CrossOrigin
-    @ApiOperation(value = "queries the catalog for datasets",
+    @ApiOperation(value = "Queries the catalog for datasets.",
             notes = "Returns a list of matching datasets wrapped in a elasticsearch response. " +
                     "Max number returned by a single query is 100. Size parameters greater than 100 will not return more than 100 datasets. " +
                     "In order to access all datasets, use multiple queries and increment from parameter.", response = Dataset.class)
@@ -139,10 +128,20 @@ public class DatasetsQueryService extends ElasticsearchService {
                                          @RequestParam(value = "subject", defaultValue = "", required = false) String subject,
 
                                          @ApiParam("Filters datasets according to their provenance code, e.g. NASJONAL - nasjonal building block, VEDTAK - governmental decisions, BRUKER - user collected data and TREDJEPART - third party data")
-                                         @RequestParam(value = "provenance", defaultValue = "", required = false) String provenance) {
+                                         @RequestParam(value = "provenance", defaultValue = "", required = false) String provenance,
+
+                                         @ApiParam("Filters datasets according to their spatial label, e.g. Oslo, Norge")
+                                         @RequestParam(value = "spatial", defaultValue = "", required = false) String spatial,
+
+                                         @ApiParam("Filters on distribution license and access rights. If true the distribution licence is open and the access rights are public.")
+                                         @RequestParam(value = "opendata", defaultValue = "", required = false) String opendata,
+
+                                         @ApiParam("Filters on catalog. ")
+                                         @RequestParam(value = "catalog", defaultValue = "", required = false) String catalog)
+    {
 
 
-        StringBuilder loggMsg = new StringBuilder()
+           StringBuilder loggMsg = new StringBuilder()
                 .append(" query:").append(query)
                 .append(" theme:").append(theme)
                 .append(" publisher:").append(publisher)
@@ -157,7 +156,9 @@ public class DatasetsQueryService extends ElasticsearchService {
                 .append(" sortfield:").append(sortfield)
                 .append(" sortdirection:").append(sortdirection)
                 .append(" subject:").append(subject)
-                .append(" provenance:").append(provenance);
+                .append(" provenance:").append(provenance)
+                .append(" spatial:").append(spatial)
+                .append(" opendata: ").append(opendata);
 
         logger.debug(loggMsg.toString());
 
@@ -182,7 +183,14 @@ public class DatasetsQueryService extends ElasticsearchService {
                 isEmpty(accessRights) && isEmpty(provenance) &&
                 isEmpty(orgPath) && isEmpty(publisher) &&
                 isEmpty(sortfield) && isEmpty(sortdirection) &&
-                isEmpty(subject) && firstHarvested == 0 && lastChanged == 0 && lastHarvested == 0;
+                isEmpty(subject) && firstHarvested == 0 && lastChanged == 0 && lastHarvested == 0 &&
+                isEmpty(provenance) && isEmpty(spatial) &&
+                isEmpty(opendata);
+
+        // add * if query only contains one word
+        if (!query.isEmpty() && !query.contains(" ")) {
+            query = query + " " + query + "*";
+        }
 
         QueryBuilder search;
 
@@ -198,6 +206,7 @@ public class DatasetsQueryService extends ElasticsearchService {
                     .field("theme.title" + "." + themeLanguage)
                     .field("description" + "." + lang)
                     .field("publisher.name").boost(3f)
+                    .field("publisher.prefLabel." + lang).boost(3f)
                     .field("accessRights.prefLabel" + "." + lang)
                     .field("accessRights.code")
                     .field("subject.prefLabel." + lang)
@@ -207,7 +216,7 @@ public class DatasetsQueryService extends ElasticsearchService {
         }
 
         // add filter
-        BoolQueryBuilder boolQuery = addFilter(theme, publisher, accessRights, search, orgPath, firstHarvested, lastHarvested, lastChanged, subject, provenance);
+        BoolQueryBuilder boolQuery = addFilter(theme, publisher, accessRights, search, orgPath, firstHarvested, lastHarvested, lastChanged, subject, provenance, spatial, opendata, catalog);
 
         // set up search query with aggregations
         SearchRequestBuilder searchBuilder = getClient().prepareSearch("dcat")
@@ -215,27 +224,30 @@ public class DatasetsQueryService extends ElasticsearchService {
                 .setQuery(boolQuery)
                 .setFrom(from)
                 .setSize(size)
-                .addAggregation(createAggregation(TERMS_SUBJECTS_COUNT, FIELD_SUBJECTS_PREFLABEL, "Ukjent"))
-                .addAggregation(createAggregation(TERMS_ACCESS_RIGHTS_COUNT, FIELD_ACCESS_RIGHTS_PREFLABEL, "Ukjent"))
-                .addAggregation(createAggregation(TERMS_THEME_COUNT, FIELD_THEME_CODE, "Ukjent"))
-                .addAggregation(createAggregation(TERMS_PUBLISHER_COUNT, FIELD_PUBLISHER_NAME, "Ukjent"))
-                .addAggregation(createAggregation("provenanceCount", "provenance.code.raw", "Ukjent"))
-                .addAggregation(createAggregation("orgPath", "publisher.orgPath", "Ukjent"))
+                .addAggregation(createAggregation(TERMS_SUBJECTS_COUNT, FIELD_SUBJECTS_PREFLABEL, UNKNOWN))
+                .addAggregation(createAggregation(TERMS_ACCESS_RIGHTS_COUNT, FIELD_ACCESS_RIGHTS_PREFLABEL, UNKNOWN))
+                .addAggregation(createAggregation(TERMS_THEME_COUNT, FIELD_THEME_CODE, UNKNOWN))
+                .addAggregation(createAggregation("catalogs", "catalog.uri", UNKNOWN))
+                .addAggregation(createAggregation("provenanceCount", "provenance.code.raw", UNKNOWN))
+                .addAggregation(createAggregation("orgPath", "publisher.orgPath", UNKNOWN))
                 .addAggregation(temporalAggregation("firstHarvested", "harvest.firstHarvested"))
                 .addAggregation(AggregationBuilders.missing("missingFirstHarvested").field("harvest.firstHarvested"))
                 .addAggregation(temporalAggregation("lastChanged", "harvest.lastChanged"))
                 .addAggregation(AggregationBuilders.missing("missingLastChanged").field("harvest.lastChanged"))
-                ;
+                .addAggregation(createAggregation("spatial", "spatial.prefLabel.no.raw", UNKNOWN))
+                .addAggregation(getOpendataAggregation());
+
 
         logger.trace("Query: {}", searchBuilder.toString());
 
-        if (emptySearch) {
-            addSortForEmptySearch(searchBuilder);
-        }
 
         // Handle attempting to sort on score, because any sorting removes score i.e. relevance from the search.
         if (sortfield.compareTo("score") != 0) {
             addSort(sortfield, sortdirection, searchBuilder);
+        }
+
+        if (emptySearch) {
+            addSortForEmptySearch(searchBuilder);
         }
 
         // Execute search
@@ -244,7 +256,15 @@ public class DatasetsQueryService extends ElasticsearchService {
         logger.trace("Search response: " + response.toString());
 
         // return response
-        return new ResponseEntity<String>(response.toString(), HttpStatus.OK);
+        return new ResponseEntity<>(response.toString(), HttpStatus.OK);
+    }
+
+    public AggregationBuilder getOpendataAggregation() {
+        return AggregationBuilders.filter("opendata")
+                    .filter(QueryBuilders.boolQuery()
+                            .must(QueryBuilders.termQuery("accessRights.code.raw", "PUBLIC"))
+                            .must(QueryBuilders.termQuery("distribution.openLicense", "true"))
+                    );
     }
 
     private void addSortForEmptySearch(SearchRequestBuilder searchBuilder) {
@@ -282,7 +302,7 @@ public class DatasetsQueryService extends ElasticsearchService {
     }
 
     RangeQueryBuilder temporalRangeBefore(int days, String dateField) {
-        return QueryBuilders.rangeQuery(dateField).lte("now-"+days+"d/d");
+        return QueryBuilders.rangeQuery(dateField).lte("now-" + days + "d/d");
     }
 
 
@@ -324,57 +344,86 @@ public class DatasetsQueryService extends ElasticsearchService {
 
 
     /**
-     * Adds theme filter to query. Multiple themes can be specified. It should return only those datasets that have
-     * all themes. To get an exact match we ned to use Elasticsearch tag count trick.
+     * Adds filters to query.
      *
-     * @param theme  comma separated list of theme codes
      * @param search the search object
      * @return a new bool query with the added filter.
      */
     private BoolQueryBuilder addFilter(String theme, String publisher, String accessRights,
                                        QueryBuilder search, String orgPath,
                                        int firstHarvested, int lastHarvested, int lastChanged,
-                                       String subject, String provenance) {
+                                       String subject, String provenance, String spatial, String opendata,
+                                       String catalog) {
 
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
                 .must(search);
 
-
         // theme can contain multiple themes, example: AGRI,HEAL
         if (!StringUtils.isEmpty(theme)) {
-            BoolQueryBuilder boolFilter = QueryBuilders.boolQuery();
+            BoolQueryBuilder themeFilter = QueryBuilders.boolQuery();
 
             for (String t : theme.split(",")) {
-                if (t.equals("Ukjent")) {
-                    boolFilter.must(QueryBuilders.missingQuery("theme.code"));
+                if (t.equals(UNKNOWN)) {
+                    themeFilter.mustNot(QueryBuilders.existsQuery("theme.code"));
                 } else {
-                    boolFilter.must(QueryBuilders.termQuery("theme.code", t));
+                    themeFilter.must(QueryBuilders.termQuery("theme.code", t));
                 }
             }
 
-            boolQuery.filter(boolFilter);
+            boolQuery.filter(themeFilter);
         }
 
         if (!StringUtils.isEmpty(publisher)) {
-            BoolQueryBuilder boolFilter2 = QueryBuilders.boolQuery();
-            if (publisher.equals("Ukjent")) {
-                boolFilter2.must(QueryBuilders.missingQuery("publisher.name.raw"));
+            BoolQueryBuilder publisherFilter = QueryBuilders.boolQuery();
+
+            if (publisher.equals(UNKNOWN)) {
+                publisherFilter.mustNot(QueryBuilders.existsQuery("publisher.name"));
             } else {
-                boolFilter2.must(QueryBuilders.termQuery("publisher.name.raw", publisher));
+                publisherFilter.must(QueryBuilders.termQuery("publisher.name.raw", publisher));
             }
 
-            boolQuery.filter(boolFilter2);
+            boolQuery.filter(publisherFilter);
         }
 
-        if (!StringUtils.isEmpty(accessRights)) {
-            BoolQueryBuilder boolFilter3 = QueryBuilders.boolQuery();
-            if (accessRights.equals("Ukjent")) {
-                boolFilter3.must(QueryBuilders.missingQuery("accessRights.code.raw"));
+        if (!StringUtils.isEmpty(catalog)) {
+            BoolQueryBuilder catalogFilter = QueryBuilders.boolQuery();
+
+            if (catalog.startsWith("http")) {
+                catalogFilter.must(QueryBuilders.termQuery("catalog.uri", catalog));
             } else {
-                boolFilter3.must(QueryBuilders.termQuery("accessRights.code.raw", accessRights));
+                catalogFilter.must(QueryBuilders.multiMatchQuery(catalog, "catalog.title.*"));
             }
 
-            boolQuery.filter(boolFilter3);
+            boolQuery.filter(catalogFilter);
+        }
+
+
+        if (!StringUtils.isEmpty(accessRights)) {
+            BoolQueryBuilder accessRightsFilter = QueryBuilders.boolQuery();
+            if (accessRights.equals(UNKNOWN)) {
+                accessRightsFilter.mustNot(QueryBuilders.existsQuery("accessRights"));
+            } else {
+                accessRightsFilter.must(QueryBuilders.termQuery("accessRights.code.raw", accessRights));
+            }
+
+            boolQuery.filter(accessRightsFilter);
+        }
+        if (!StringUtils.isEmpty(opendata)) {
+            BoolQueryBuilder opendataFilter = QueryBuilders.boolQuery();
+            if(opendata.equals("true")){
+                opendataFilter.must(QueryBuilders.termQuery("distribution.openLicense", "true"));
+                opendataFilter.must(QueryBuilders.termQuery("accessRights.code.raw", "PUBLIC"));
+            }
+            //Handle the negative cases
+            else if(opendata.equals("false")){
+                BoolQueryBuilder notOpenLicenseFilter = QueryBuilders.boolQuery();
+                BoolQueryBuilder notOpenDistributionFilter = QueryBuilders.boolQuery();
+                notOpenLicenseFilter.mustNot(QueryBuilders.termQuery("distribution.openLicense", "true"));
+                notOpenDistributionFilter.mustNot(QueryBuilders.termQuery("accessRights.code.raw", "PUBLIC"));
+                opendataFilter.should(notOpenLicenseFilter);
+                opendataFilter.should(notOpenDistributionFilter);
+            }
+            boolQuery.filter(opendataFilter);
         }
 
         if (!StringUtils.isEmpty(orgPath)) {
@@ -404,20 +453,24 @@ public class DatasetsQueryService extends ElasticsearchService {
 
         if (!StringUtils.isEmpty(subject)) {
             BoolQueryBuilder subjectFilter = QueryBuilders.boolQuery();
-            for (String subj : subject.split(",")) {
-                if (subj.startsWith("http")) {
+
+            Arrays.stream(subject.split(",")).forEach( subj -> {
+                if (subj.equals(UNKNOWN)){
+                    subjectFilter.mustNot(QueryBuilders.existsQuery("subject"));
+                } else if (subj.startsWith("http")) {
                     subjectFilter.must(QueryBuilders.matchQuery("subject.uri", subj));
                 } else {
-                    subjectFilter.must(QueryBuilders.termQuery("subject.prefLabel.no", subj));
+                    subjectFilter.must(QueryBuilders.termQuery("subject.prefLabel.no.raw", subj));
                 }
-            }
+            });
             boolQuery.filter(subjectFilter);
         }
 
         if (!StringUtils.isEmpty(provenance)) {
             BoolQueryBuilder provenanceFilter = QueryBuilders.boolQuery();
-            if (provenance.equals("Ukjent")) {
-                provenanceFilter.must(QueryBuilders.missingQuery("provenance.code.raw"));
+
+            if (provenance.equals(UNKNOWN)) {
+                provenanceFilter.mustNot(QueryBuilders.existsQuery("provenance"));
             } else {
                 provenanceFilter.must(QueryBuilders.termQuery("provenance.code.raw", provenance));
             }
@@ -425,9 +478,26 @@ public class DatasetsQueryService extends ElasticsearchService {
             boolQuery.filter(provenanceFilter);
         }
 
+        if (!StringUtils.isEmpty(spatial)) {
+            BoolQueryBuilder spatialFilter = QueryBuilders.boolQuery();
+
+            Arrays.stream(spatial.split(",")).forEach(spatialLabel -> {
+                if (spatialLabel.equals(UNKNOWN)) {
+                    spatialFilter.mustNot(QueryBuilders.existsQuery("spatial"));
+                } else if (spatialLabel.startsWith("http")) {
+                    spatialFilter.must(QueryBuilders.termQuery("spatial.uri", spatialLabel));
+                } else {
+                    spatialFilter.must(QueryBuilders.termQuery("spatial.prefLabel.no.raw", spatialLabel));
+                }
+            });
+
+            boolQuery.filter(spatialFilter);
+        }
+
+
+
         return boolQuery;
     }
-
 
     /**
      * Retrieves the dataset record identified by the provided id. The complete dataset, as defined in elasticsearch,
@@ -435,10 +505,9 @@ public class DatasetsQueryService extends ElasticsearchService {
      * <p/>
      *
      * @return the record (JSON) of the retrieved dataset. The complete elasticsearch response on Json-fornat is returned.
-     * @Exception A http error is returned if no records is found or if any other error occured.
      */
     @CrossOrigin
-    @ApiOperation(value = "gets a specific dataset",
+    @ApiOperation(value = "Get a specific dataset.",
             notes = "You must specify the dataset's identifier", response = Dataset.class)
     @RequestMapping(value = "/datasets/**", method = RequestMethod.GET, produces = {"application/json", "text/turtle", "application/ld+json", "application/rdf+xml"})
     public ResponseEntity<String> detail(HttpServletRequest request) {
@@ -469,7 +538,7 @@ public class DatasetsQueryService extends ElasticsearchService {
             return jsonError;
         }
 
-        logger.info("request sucess for {}", id);
+        logger.info("request success for {}", id);
 
         String acceptHeader = request.getHeader("Accept");
         if (acceptHeader != null && !acceptHeader.isEmpty() && !acceptHeader.contains("application/json")) {
@@ -516,89 +585,6 @@ public class DatasetsQueryService extends ElasticsearchService {
 
 
     /**
-     * Return a count of the number of data sets for each theme code
-     * The query will not return the data sets themselves, only the counts.
-     * If no parameter is specified, the result will be a set of counts for
-     * all used theme codes.
-     * For each theme, the result will include the theme code and an integer
-     * representing the number of data sets with this theme code.
-     * If the optional themecode parameter is specified, only the theme code
-     * and number of data sets for this code is returned
-     *
-     * @param themecode optional parameter specifiying which theme should be counted
-     * @return json containing theme code and integer count of number of data sets
-     */
-    @CrossOrigin
-    @ApiOperation(value = "aggregate dataset count per theme", notes = "Returns a list of themes and the total number of datasets for each of them",
-            response = SkosConcept.class)
-    @RequestMapping(value = QUERY_THEME_COUNT, method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<String> themecount(@RequestParam(value = "code", defaultValue = "", required = false) String themecode) {
-        return aggregateOnField(FIELD_THEME_CODE, themecode, TERMS_THEME_COUNT, "Ukjent");
-    }
-
-    /**
-     * Returns a list of publishers and the total number of dataset for each of them.
-     * <p/>
-     * The returnlist will consist of the defined publisher or for all publishers, registered in
-     * elastic search, if no publisher is defined.
-     * <p/>
-     *
-     * @param publisher optional parameter specifiying which publisher should be counted
-     * @return json containing publishers and integer count of number of data sets
-     */
-    @CrossOrigin
-    @ApiOperation(value = "aggregate dataset count per publisher",
-            notes = "Returns a list of publishers and the total number of dataset for each of them")
-    @RequestMapping(value = QUERY_PUBLISHER_COUNT, method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<String> publisherCount(@RequestParam(value = "publisher", defaultValue = "", required = false) String publisher) {
-        return aggregateOnField(FIELD_PUBLISHER_NAME, publisher, TERMS_PUBLISHER_COUNT, "Ukjent");
-    }
-
-    private ResponseEntity<String> aggregateOnField(String field, String fieldValue, String term, String missing) {
-        ResponseEntity<String> jsonError = initializeElasticsearchTransportClient();
-
-        QueryBuilder search;
-
-        if (StringUtils.isEmpty(fieldValue)) {
-            logger.debug(String.format("Count datasets for all %s", field));
-            search = QueryBuilders.matchAllQuery();
-            /*JSON: {
-                "match_all" : { }
-             }*/
-        } else {
-            logger.debug(String.format("Count datasets for %s of type %s.", fieldValue, field));
-            search = QueryBuilders.simpleQueryStringQuery(fieldValue)
-                    .field(field);
-
-            /*JSON: {
-                "query": {
-                    "match": {"theme.code" : "GOVE"}
-                }
-            }*/
-        }
-
-        //Create the aggregation object that counts the datasets
-        AggregationBuilder aggregation = createAggregation(term, field, missing);
-
-        SearchResponse response = getClient().prepareSearch(INDEX_DCAT)
-                .setQuery(search)
-                .setSize(NO_HITS)  //only the aggregation should be returned
-                .setTypes(TYPE_DATASET)
-                .addAggregation(aggregation)
-                .execute().actionGet();
-
-        logger.debug(aggregation.toString());
-
-        logger.trace(String.format("Dataset count for field %s: %s", field, response.toString()));
-
-        if (jsonError != null) {
-            return jsonError;
-        }
-
-        return new ResponseEntity<>(response.toString(), HttpStatus.OK);
-    }
-
-    /**
      * Create aggregation object that counts the number of
      * datasets for each value of the defined field.
      * <p/>
@@ -624,7 +610,7 @@ public class DatasetsQueryService extends ElasticsearchService {
      */
 
     @CrossOrigin
-    @ApiOperation(value = "aggregatds dataset count per organization path")
+    @ApiOperation(value = "Aggregates dataset count per organization path.")
     @RequestMapping(value = AGGREGATE_DATASET, method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<String> aggregateDatasets(@RequestParam(value = "q", defaultValue = "") String query) {
 
@@ -660,17 +646,18 @@ public class DatasetsQueryService extends ElasticsearchService {
                 .setTypes("dataset")
                 .setQuery(search)
                 .setSize(0)
-                .addAggregation(createAggregation(TERMS_ACCESS_RIGHTS_COUNT, FIELD_ACCESS_RIGHTS_PREFLABEL, "Ukjent"))
-                .addAggregation(createAggregation(TERMS_THEME_COUNT, FIELD_THEME_CODE, "Ukjent"))
-                .addAggregation(createAggregation(TERMS_PUBLISHER_COUNT, FIELD_PUBLISHER_NAME, "Ukjent"))
-                .addAggregation(createAggregation("orgPath", "publisher.orgPath", "Ukjent"))
+                .addAggregation(createAggregation(TERMS_ACCESS_RIGHTS_COUNT, FIELD_ACCESS_RIGHTS_PREFLABEL, UNKNOWN))
+                .addAggregation(createAggregation(TERMS_THEME_COUNT, FIELD_THEME_CODE, UNKNOWN))
+                .addAggregation(createAggregation("orgPath", "publisher.orgPath", UNKNOWN))
+                .addAggregation(createAggregation("catalogs", "catalog.uri", UNKNOWN))
                 .addAggregation(temporalAggregation("firstHarvested", "harvest.firstHarvested"))
                 .addAggregation(AggregationBuilders.missing("missingFirstHarvested").field("harvest.firstHarvested"))
                 .addAggregation(temporalAggregation("lastChanged", "harvest.lastChanged"))
                 .addAggregation(AggregationBuilders.missing("missingLastChanged").field("harvest.lastChanged"))
                 .addAggregation(datasetsWithDistribution)
                 .addAggregation(openDatasetsWithDistribution)
-                .addAggregation(datasetsWithSubject);
+                .addAggregation(datasetsWithSubject)
+                .addAggregation(getOpendataAggregation());
 
         // Execute search
         SearchResponse response = searchBuilder.execute().actionGet();
@@ -678,7 +665,7 @@ public class DatasetsQueryService extends ElasticsearchService {
         logger.trace("Search response: " + response.toString());
 
         // return response
-        return new ResponseEntity<String>(response.toString(), HttpStatus.OK);
+        return new ResponseEntity<>(response.toString(), HttpStatus.OK);
     }
 
 }
