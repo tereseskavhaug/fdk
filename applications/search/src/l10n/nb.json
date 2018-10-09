@@ -22,11 +22,7 @@
   "non_public": "Unntatt offentlighet",
   "unknown": "Ukjent",
   "app": {
-    "title": "Felles Datakatalog",
-    "titleSub": "Oversikt over datasett fra virksomheter i Norge.",
-    "publisher": "Virksomhet",
-    "menu": "Meny",
-    "readMore": "Les mer om "
+    "menu": "Meny"
   },
   "beta": {
     "header": "Dette er en beta-versjon. ",
@@ -42,21 +38,15 @@
     "english-en": "Engelsk"
   },
   "menu": {
-    "home": "Hjem",
+    "home": "Søk i Felles datakatalog",
     "about": "Om Felles Datakatalog",
     "aboutRegistration": "Registrere datasett",
     "reports": "Rapporter"
-  },
-  "feedback": {
-    "title": "Tilbakemelding"
   },
   "query": {
     "intro": "Søk etter innhold",
     "do": "Søk",
     "clear": "Fjern alle filtre"
-  },
-  "login": {
-    "title": "Logg inn"
   },
   "about": {
     "about": "Om Felles Datakatalog",
@@ -96,9 +86,7 @@
     },
     "search": "Søket ga",
     "datasetHits": "treff i datasett",
-    "datasetNoHits": "ingen treff i datasett",
     "conceptHits": "treff i begrep",
-    "conceptNoHits": "ingen treff i begrep",
     "noHits": "Søket ga dessverre ingen treff",
     "concepts": "begrep",
     "and": "og",
@@ -132,9 +120,6 @@
     "dataset":"Datasett",
     "waiting":"Henter data ..."
   },
-  "noHits": {
-    "error": "Ingen datasett funnet"
-  },
   "footer": {
     "organisation.number": "Organisasjonsnummer:",
     "information": "Informasjonskapsler",
@@ -146,8 +131,8 @@
   "sort": {
     "by": "Sorter på",
     "relevance": "relevans",
-    "title": "tittel",
-    "publisher": "utgiver",
+    "title": "tittel A-Å",
+    "publisher": "utgiver  A-Å",
     "modified": "sist endret"
   },
   "search_hit": {
@@ -160,6 +145,7 @@
     "vedtak": "Vedtak"
   },
   "dataset": {
+    "keyInfo": "Bruk av datasettet",
     "accessRight": "Datasettet er",
     "title": "Datasett",
     "type": "Type",
@@ -168,6 +154,7 @@
     "conformsTo": "Innholdsstandard",
     "informationModel": "Informasjonsmodell",
     "informationModelDefaultText": "Informasjonsmodell",
+    "distributions": "Distribusjoner",
     "distribution": {
       "title": "Distribusjon",
       "format": "Tilgjengelige format",
@@ -181,26 +168,26 @@
       "referenceDefault": "Relasjon",
       "type": "Type"
     },
-    "issued": "Utgivelsesdato",
+    "issued": "Utgitt",
     "quality": "Kvalitet på innhold",
     "provenance": "Opphav",
     "currentness": "Aktualitet",
     "frequency": "Oppdateringsfrekvens",
     "miscInfo": "Øvrig info",
     "created": "Opprettet",
-    "modified": "Sist endret",
+    "modified": "Sist oppdatert",
     "language": "Språk",
     "theme": "Tema",
-    "periodFrom": "Gjelder fra",
-    "periodTo": "Gjelder til",
+    "periodFrom": "Tidsmessig avgrenset fra",
+    "periodTo": "Tidsmessig avgrenset til",
     "spatial": "Geografisk avgrenset til",
     "information": "Opplysninger",
     "keyword": "Søkeord",
-    "subject": "Begrep",
-    "restrictions": "Restriksjoner",
+    "subject": "Begrep brukt i datasettet",
+    "restrictions": "Avgrensninger",
     "comments": "Kommentar",
     "objective": "Formål",
-    "related": "Relaterte",
+    "related": "Relaterte datasett",
     "relates": "Relatert",
     "restriction": "Restriksjon",
     "downloadText": "Last ned DCAT-beskrivelse:",
@@ -231,7 +218,8 @@
         "nonPublicDetailsLabel": "Datasettet er unntatt offentlighet"
       }
     },
-    "sample": "Eksempeldata"
+    "sample": "Eksempeldata",
+    "landingPage": "Mer informasjon om datasettet"
   },
   "terms": {
     "compareTerms": "Sammenlign begrep",
@@ -246,7 +234,6 @@
     "source": "Kilde",
     "note": "Beskrivelse",
     "compare": "Sammenligning",
-    "hideCompare": "Skjul sammenligning",
     "openCompare": "Vis sammenligning",
     "remove": "Fjern begrep",
     "added": "Du har lagt ",
@@ -263,9 +250,9 @@
     "restricted": "Datasett med begrenset offentlighet",
     "nonPublic": "Datasett som er unntatt offentlighet",
     "unknown": "Datasett med ukjent tilgangsnivå",
-    "changesLastWeek": "Endring siste 7 dager",
-    "changesLastMonth": "Endring siste 30 dager",
-    "changesLastYear": "Endring siste 365 dager",
+    "changesLastWeek": "Publisert siste 7 dager",
+    "changesLastMonth": "Publisert siste 30 dager",
+    "changesLastYear": "Publisert siste 365 dager",
     "newDatasets": "Nye datasett",
     "deletedDatasets": "Slettede datasett",
     "concepts": "Bruk av begrep",

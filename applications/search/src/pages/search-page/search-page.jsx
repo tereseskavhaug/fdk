@@ -37,7 +37,7 @@ export class SearchPage extends React.Component {
       searchQuery
     };
 
-    this.handleClearSearch = this.handleClearSearch.bind(this);
+    this.handleClearFilters = this.handleClearFilters.bind(this);
     this.handleSearchSubmit = this.handleSearchSubmit.bind(this);
     this.handleSearchChange = this.handleSearchChange.bind(this);
     this.handleDatasetFilterThemes = this.handleDatasetFilterThemes.bind(this);
@@ -65,20 +65,29 @@ export class SearchPage extends React.Component {
 
     this.props.fetchThemesIfNeeded();
     this.props.fetchPublishersIfNeeded();
-    this.props.fetchDistributionTypeIfNeeded();
+    this.props.fetchReferenceDataIfNeeded();
   }
 
-  handleClearSearch() {
+  handleClearFilters() {
+    const searchQuery = _.pick(this.state.searchQuery, [
+      'q',
+      'sortfield',
+      'sortdirection'
+    ]);
     this.setState(
       {
-        searchQuery: {}
+        searchQuery
       },
       this.handleSearchSubmit
     );
   }
 
   isFilterNotEmpty() {
-    return _.some(_.values(this.state.searchQuery));
+    return _.some(
+      _.values(
+        _.omit(this.state.searchQuery, ['q', 'sortfield', 'sortdirection'])
+      )
+    );
   }
 
   handleSearchSubmit() {
@@ -442,7 +451,7 @@ export class SearchPage extends React.Component {
       apiItems,
       themesItems,
       publisherItems,
-      distributionTypeItems,
+      referenceData,
       location
     } = this.props;
     const topSectionClass = cx('top-section-search', 'mb-4', {
@@ -478,7 +487,7 @@ export class SearchPage extends React.Component {
               render={props => (
                 <ResultsDataset
                   datasetItems={datasetItems}
-                  onClearSearch={this.handleClearSearch}
+                  onClearFilters={this.handleClearFilters}
                   onFilterTheme={this.handleDatasetFilterThemes}
                   onFilterAccessRights={this.handleDatasetFilterAccessRights}
                   onFilterPublisher={this.handleDatasetFilterPublisher}
@@ -497,7 +506,7 @@ export class SearchPage extends React.Component {
                   hitsPerPage={50}
                   publisherArray={extractPublisherCounts(datasetItems)}
                   publishers={publisherItems}
-                  distributionTypeItems={distributionTypeItems}
+                  referenceData={referenceData}
                   {...props}
                 />
               )}
@@ -508,7 +517,7 @@ export class SearchPage extends React.Component {
               render={props => (
                 <ResultsApi
                   apiItems={this.props.apiItems}
-                  onClearSearch={this.handleClearSearch}
+                  onClearFilters={this.handleClearFilters}
                   onFilterTheme={this.handleDatasetFilterThemes}
                   onFilterAccessRights={this.handleDatasetFilterAccessRights}
                   onFilterPublisher={this.handleDatasetFilterPublisher}
@@ -528,7 +537,6 @@ export class SearchPage extends React.Component {
                   hitsPerPage={50}
                   publisherArray={extractPublisherCounts(apiItems)}
                   publishers={publisherItems}
-                  distributionTypeItems={distributionTypeItems}
                   {...props}
                 />
               )}
@@ -539,7 +547,7 @@ export class SearchPage extends React.Component {
               render={props => (
                 <ResultsConcepts
                   termItems={termItems}
-                  onClearSearch={this.handleClearSearch}
+                  onClearFilters={this.handleClearFilters}
                   onPageChange={this.handlePageChange}
                   onFilterPublisherHierarchy={
                     this.handleDatasetFilterPublisherHierarchy

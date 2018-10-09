@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import withBreadcrumbs from 'react-router-breadcrumbs-hoc';
 
 import { DatasetBreadcrumb } from './dataset-breadcrumb/dataset-breadcrumb';
+import { ApiBreadcrumb } from './api-breadcrumb/api-breadcrumb';
 import { PathNameBreadcrumb } from './pathname-breadcrumb/pathname-breadcrumb';
 import './breadcrumbs.scss';
 
@@ -10,7 +11,7 @@ import './breadcrumbs.scss';
 const routes = [
   { path: '/', breadcrumb: <PathNameBreadcrumb pathName="home" /> },
   { path: '/datasets/:id', breadcrumb: DatasetBreadcrumb },
-  { path: '/apis/:id', breadcrumb: DatasetBreadcrumb },
+  { path: '/apis/:id', breadcrumb: ApiBreadcrumb },
   { path: '/about', breadcrumb: <PathNameBreadcrumb pathName="about" /> },
   {
     path: '/about-registration',
@@ -36,10 +37,15 @@ const PureBreadcrumbs = ({ breadcrumbs }) => {
         <p className="fdk-p-path">
           {breadcrumbs.map((breadcrumb, index) => (
             <span key={breadcrumb.key}>
-              <NavLink to={breadcrumb.props.match.url}>{breadcrumb}</NavLink>
               {index < breadcrumbs.length - 1 && (
-                <i className="fa fa-angle-right fdk-fa-path" />
+                <React.Fragment>
+                  <NavLink to={breadcrumb.props.match.url}>
+                    {breadcrumb}
+                  </NavLink>
+                  <i className="fa fa-angle-right fdk-fa-path" />
+                </React.Fragment>
               )}
+              {index === breadcrumbs.length - 1 && breadcrumb}
             </span>
           ))}
         </p>

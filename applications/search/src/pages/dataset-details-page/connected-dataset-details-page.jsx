@@ -1,20 +1,12 @@
 import { connect } from 'react-redux';
-import { fetchDistributionTypeIfNeededAction } from '../../redux/modules/distributionType';
+import { fetchReferenceDataIfNeededAction } from '../../redux/modules/referenceData';
 import { ResolvedDatasetDetailsPage } from './resolved-dataset-details-page';
 
-const mapStateToProps = ({ distributionTypes }) => {
-  const { distributionTypeItems } = distributionTypes || {
-    distributionTypeItems: null
-  };
-
-  return {
-    distributionTypeItems
-  };
-};
+const mapStateToProps = ({ referenceData }) => ({ referenceData });
 
 const mapDispatchToProps = dispatch => ({
-  fetchDistributionTypeIfNeeded: () =>
-    dispatch(fetchDistributionTypeIfNeededAction())
+  fetchReferenceDataIfNeeded: code =>
+    dispatch(fetchReferenceDataIfNeededAction(code))
 });
 
 export const ConnectedDatasetDetailsPage = connect(

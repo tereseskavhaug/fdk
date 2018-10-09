@@ -1,13 +1,16 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import { ResultsDataset } from './results-dataset.component';
-import datasetItems from '../../../../test/fixtures/datasetItems';
+import datasetsResponse from '../__fixtures/datasetsApiResponse.json';
+import { normalizeAggregations } from '../../../api/normalizeAggregations';
+
+const datasetItems = normalizeAggregations(datasetsResponse);
 
 let closeFilterModal;
 let onFilterTheme;
 let onFilterAccessRights;
 let onFilterPublisherHierarchy;
-let onClearSearch;
+let onClearFilters;
 let onSort;
 let onPageChange;
 let defaultProps;
@@ -18,7 +21,7 @@ beforeEach(() => {
   onFilterTheme = jest.fn();
   onFilterAccessRights = jest.fn();
   onFilterPublisherHierarchy = jest.fn();
-  onClearSearch = jest.fn();
+  onClearFilters = jest.fn();
   onSort = jest.fn();
   onPageChange = jest.fn();
 
@@ -38,7 +41,7 @@ beforeEach(() => {
     onFilterTheme,
     onFilterAccessRights,
     onFilterPublisherHierarchy,
-    onClearSearch,
+    onClearFilters,
     onSort,
     onPageChange
   };
@@ -56,7 +59,7 @@ test('should render ResultsDataset correctly with props', () => {
 
 test('should render ResultsDataset correctly with hits', () => {
   wrapper.setProps({
-    datasetItems: datasetItems[0]
+    datasetItems
   });
   expect(wrapper).toMatchSnapshot();
 });

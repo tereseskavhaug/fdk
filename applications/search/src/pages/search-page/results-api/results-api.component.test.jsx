@@ -1,13 +1,13 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import { ResultsApi } from './results-api.component';
-import apisApiResponse from './__fixtures/apisApiResponse.json';
+import apisApiResponse from '../__fixtures/apisApiResponse.json';
 
 let closeFilterModal;
 let onFilterTheme;
 let onFilterAccessRights;
 let onFilterPublisherHierarchy;
-let onClearSearch;
+let onClearFilters;
 let onSort;
 let onPageChange;
 let defaultProps;
@@ -18,7 +18,7 @@ beforeEach(() => {
   onFilterTheme = jest.fn();
   onFilterAccessRights = jest.fn();
   onFilterPublisherHierarchy = jest.fn();
-  onClearSearch = jest.fn();
+  onClearFilters = jest.fn();
   onSort = jest.fn();
   onPageChange = jest.fn();
 
@@ -35,7 +35,7 @@ beforeEach(() => {
     onFilterTheme,
     onFilterAccessRights,
     onFilterPublisherHierarchy,
-    onClearSearch,
+    onClearFilters,
     onSort,
     onPageChange
   };

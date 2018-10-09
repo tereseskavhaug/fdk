@@ -2,46 +2,72 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <groupId>no.dcat</groupId>
-        <artifactId>applications</artifactId>
-        <version>1.0</version>
-    </parent>
-
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>no.dcat</groupId>
     <artifactId>end2end-test</artifactId>
     <version>1.0.0</version>
 
+    <properties>
+        <!--standard properties-->
+        <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.exec.skip>false</maven.exec.skip>
+        <!--end standard properties-->
+    </properties>
 
     <dependencies>
         <dependency>
+            <groupId>no.dcat</groupId>
+            <artifactId>shared</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>no.dcat</groupId>
+            <artifactId>datastore</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>no.dcat</groupId>
+            <artifactId>harvester-api</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
+            <version>2.0.4.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <version>1.7.21</version>
         </dependency>
 
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-java</artifactId>
+            <version>1.2.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-spring</artifactId>
+            <version>1.2.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-junit</artifactId>
+            <version>1.2.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-core</artifactId>
+            <version>1.2.5</version>
             <scope>test</scope>
         </dependency>
 
@@ -54,15 +80,15 @@
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>webdrivermanager</artifactId>
-            <version>1.6.0</version>
+            <version>3.0.0</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.codeborne</groupId>
+            <artifactId>phantomjsdriver</artifactId>
+            <version>1.4.1</version>
         </dependency>
 
-        <dependency>
-            <groupId>no.dcat</groupId>
-            <artifactId>harvester-api</artifactId>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.awaitility</groupId>
@@ -74,25 +100,35 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+            <version>3.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <version>2.0.4.RELEASE</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+            <version>2.0.4.RELEASE</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>21.0</version>
         </dependency>
         <dependency>
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch</artifactId>
-            <scope>test</scope>
+            <groupId>no.dcat</groupId>
+            <artifactId>elasticsearch5-client</artifactId>
+            <version>1.0.0</version>
         </dependency>
-    </dependencies>
 
+
+    </dependencies>
 
 
 </project>

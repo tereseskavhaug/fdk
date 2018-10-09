@@ -1,3 +1,4 @@
+
 [![Build Status](https://travis-ci.org/Informasjonsforvaltning/fdk.svg?branch=master)](https://travis-ci.org/Informasjonsforvaltning/fdk) 
 [![codecov](https://codecov.io/gh/Informasjonsforvaltning/fdk/branch/develop/graph/badge.svg)](https://codecov.io/gh/Informasjonsforvaltning/fdk)
 
@@ -32,16 +33,53 @@ If you have any questions please send them to [fellesdatakatalog@brreg.no](mailt
 
 # Usage
 
-## Test the search application
+# Test the search application
 The search application is available [here](https://fellesdatakatalog.brreg.no). The two other applications
 are only available for registered users. 
 Any questions can be sent to [fellesdatakatalog@brreg.no](mailto:fellesdatakatalog@brreg.no).
 
-The [search api](https://fellesdatakatalog.brreg.no/swagger-ui.html) can also be used.
+The [search api](https://github.com/brreg/openAPI/blob/master/specs/fdk.yaml) can also be used.
 
-## Compile
-The system consists of several modules which can be compiled with `mvn clean install`. 
-A successful build results in corresponding docker images. 
+## Set up your developement environnement
+  1) Clone this repo
+  2) Install Java8, Maven and Docker. 
+  If you have a Mac, running this script will install Java8 and Maven automatically: 
+
+         ./install-dependencies-mac.sh
+  3) (re)compile the entire project: 
+
+         ./runAll.sh  
+
+	  If you only want to compile one module ("search-api" in this example), use the following:     
+
+         ./runDocker.sh search-api
+	 
+	 Frontend applications such as search and registration-react are built and run the following way:
+	 
+	 docker-compose up -d --build registration-react
+
+  4) Run without compiling the entire project using 
+
+          docker-compose up -d
+	  ...or a specific module  ("registration" in this example) using
+
+            docker-compose up -d registration
+  5) Run end2end tests
+      
+      brew cask install chromium
+
+      cd applications/e2e
+      
+      // install npm dependencies
+      npm i
+
+      // run tests in chromium
+      npm t
+      
+      // run tests headless
+      npm test:headless
+
+            
 
 ## Run from Docker Hub
 The docker images are also available on [Docker Hub](https://hub.docker.com/u/dcatno/). 
@@ -114,8 +152,12 @@ can be used: (03096000854, 01066800187, 23076102252)
 ## Shut down all containers:
 >`docker-compose down`
 
+## Run end2end tests (java)
+
+In IntelliJ, select module applications/end2end-test and click "run tests"
+
 # Storage
-The repository is stored in a persistent volume, see [data/esdata](data/esdata) for elasticsearch 
+The repository is stored in a persistent volume, see [data/esdata5](data/esdata5) for elasticsearch 
 repository and [data/fuseki](data/fuseki) for the fuseki repository. 
   * Elasticsearch stores the data in JSON denormalized for search
   * Fuseki stores the data in RDF/DCAT format
@@ -148,3 +190,7 @@ Solution: remove old containers
 
 Remove old images
 >  `bash: docker rmi -f $(docker images -q)`
+
+Docker is slow on mac:
+Docker needs at least 8G of memory
+>  Docker -> Preferences -> Advanced -> Change memory to (8 GiB)

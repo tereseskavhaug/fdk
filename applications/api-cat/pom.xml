@@ -7,23 +7,28 @@
 
     <groupId>no.dcat</groupId>
     <artifactId>api-cat</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.2.0</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.0.4.RELEASE</version>
-        <!-- <relativePath />  lookup parent from repository -->
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <properties>
-        <java.encoding>UTF-8</java.encoding>
+        <!--standard properties-->
         <java.version>1.8</java.version>
-        <docker.image.prefix>dcatno</docker.image.prefix>
-        <docker.registry />
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.exec.skip>false</maven.exec.skip>
+        <!--end standard properties-->
 
+        <docker.image.prefix>dcatno</docker.image.prefix>
+        <docker.registry/>
         <unittest.category/>
         <endtoendtest.category/>
         <loadtest.category/>
@@ -52,8 +57,17 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.vaadin.external.google</groupId>
+                    <artifactId>android-json</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.mockito</groupId>
+                    <artifactId>mockito-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
-
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -61,9 +75,9 @@
             <scope>test</scope>
         </dependency>
 
-         <dependency>
+        <dependency>
             <groupId>no.dcat</groupId>
-            <artifactId>elasticsearch5client</artifactId>
+            <artifactId>elasticsearch5-client</artifactId>
             <version>1.0.0</version>
         </dependency>
 
@@ -101,12 +115,6 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.16.18</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch</artifactId>
-            <version>5.6.9</version>
         </dependency>
 
         <dependency>
@@ -153,6 +161,9 @@
                         <goals>
                             <goal>repackage</goal>
                         </goals>
+                        <configuration>
+                            <classifier>exec</classifier>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -172,16 +183,15 @@
                 </executions>
                 <configuration>
                     <imageName>
-                        ${docker.registry}${docker.image.prefix}/api-cat:latest
+                        ${docker.registry}${docker.image.prefix}/${project.artifactId}:latest
                     </imageName>
                     <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
-                    <!--dockerDirectory>docker</dockerDirectory -->
                     <pushImage>false</pushImage>
                     <resources>
                         <resource>
                             <targetPath>/</targetPath>
                             <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.jar</include>
+                            <include>${project.build.finalName}-exec.jar</include>
                             <excludes>
                                 <exclude>target/**/*</exclude>
                                 <exclude>pom.xml</exclude>

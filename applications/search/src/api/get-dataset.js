@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import axios from 'axios';
 
 export const getDataset = async id => {
@@ -8,5 +7,15 @@ export const getDataset = async id => {
     .get(url)
     .catch(e => console.log(JSON.stringify(e))); // eslint-disable-line no-console
 
-  return _.get(response, 'data.hits.hits[0]._source');
+  return response && response.data;
+};
+
+export const getDatasetByURI = async uri => {
+  const url = `/datasets/byuri?uri=${uri}`;
+
+  const response = await axios
+    .get(url)
+    .catch(e => console.log(JSON.stringify(e))); // eslint-disable-line no-console
+
+  return response && response.data;
 };

@@ -22,11 +22,7 @@
   "non_public": "Non public",
   "unknown": "Unknown",
   "app": {
-    "title": "The National Data Directory",
-    "titleSub": "Datasets from publishers in Norway.",
-    "publisher": "Choose by publisher",
-    "menu": "Menu",
-    "readMore": "Read more about "
+    "menu": "Menu"
   },
   "beta": {
     "header": "This is a beta version. ",
@@ -42,21 +38,15 @@
     "english-en": "English"
   },
   "menu": {
-    "home": "Home",
+    "home": "Search in The National Data Directory",
     "about": "About The National Data Directory",
     "aboutRegistration": "Registration",
     "reports": "Reports"
-  },
-  "feedback": {
-    "title": "Feedback"
   },
   "query": {
     "intro": "Search for datasets...",
     "do": "Search",
     "clear": "Clear"
-  },
-  "login": {
-    "title": "Log in"
   },
   "about": {
     "about": "About The National Data Directory",
@@ -96,9 +86,7 @@
     },
     "search": "Search gave",
     "datasetHits": "hit(s) among datasets",
-    "datasetNoHits": "no hits among datasets",
     "conceptHits": "hit(s) among concepts",
-    "conceptNoHits": "no hits among concepts",
     "noHits": "Sorry, no hits",
     "concepts": "concepts",
     "and": "and",
@@ -124,17 +112,13 @@
       "PRIVAT": "Private",
       "ANNET": "Other"
     },
-    "provenance": "Provenance"
-  ,
+    "provenance": "Provenance",
     "provider": "Provider",
     "format": "Format"
   },
   "result": {
     "dataset":"Dataset",
     "waiting":"Fetching data ..."
-  },
-  "noHits": {
-    "error": "No datasets are found"
   },
   "footer": {
     "organisation.number": "Organisation number:",
@@ -147,8 +131,8 @@
   "sort": {
     "by": "Sort by",
     "relevance": "relevance",
-    "title": "title",
-    "publisher": "publisher",
+    "title": "title A-Z",
+    "publisher": "publisher A-Z",
     "modified": "modified"
   },
   "search_hit": {
@@ -161,6 +145,7 @@
     "vedtak": "Decision"
   },
   "dataset": {
+    "keyInfo": "Use of dataset",
     "accessRight": "Dataset is",
     "title": "Dataset",
     "type": "Type",
@@ -169,6 +154,7 @@
     "conformsTo": "Conforms to",
     "informationModel": "Information model",
     "informationModelDefaultText": "Information model",
+    "distributions": "Distributions",
     "distribution": {
       "title": "Distribution",
       "format": "Format",
@@ -201,7 +187,7 @@
     "restrictions": "Restrictions",
     "comments": "Comments",
     "objective": "Objective",
-    "related": "Related",
+    "related": "Related datasets",
     "relates": "Relates",
     "restriction": "Restriction",
     "downloadText": "Download DCAT-description:",
@@ -232,7 +218,8 @@
         "nonPublicDetailsLabel": "Dataset is non public"
       }
     },
-    "sample": "Sample data"
+    "sample": "Sample data",
+    "landingPage": "More information about this dataset"
   },
   "terms": {
     "compareTerms": "Compare concepts",
@@ -247,7 +234,6 @@
     "source": "Source",
     "note": "Description",
     "compare": "Comparison",
-    "hideCompare": "Hide comparison",
     "openCompare": "Show comparison",
     "remove": "Remove concept",
     "added": "You have added ",
@@ -264,9 +250,9 @@
     "restricted": "Datasets with restricted access",
     "nonPublic": "Datasets that are not public",
     "unknown": "Datasets with unknown accesslevel",
-    "changesLastWeek": "Changes last 7 days",
-    "changesLastMonth": "Changes last 30 days",
-    "changesLastYear": "Changes last 365 days",
+    "changesLastWeek": "Published in last 7 days",
+    "changesLastMonth": "Published in last 30 days",
+    "changesLastYear": "Published in last 365 days",
     "newDatasets": "New datasets",
     "deletedDatasets": "Deleted datasets",
     "concepts": "Use of concepts",

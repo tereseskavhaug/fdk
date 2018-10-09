@@ -85,14 +85,11 @@ export class ResultsDataset extends React.Component {
   }
 
   _renderHits() {
-    const { datasetItems, distributionTypeItems } = this.props;
+    const { datasetItems, referenceData } = this.props;
     if (datasetItems && datasetItems.hits && datasetItems.hits.hits) {
       return datasetItems.hits.hits.map(item => (
         <ErrorBoundary key={item._source.id}>
-          <SearchHitItem
-            result={item}
-            distributionTypeItems={distributionTypeItems}
-          />
+          <SearchHitItem result={item} referenceData={referenceData} />
         </ErrorBoundary>
       ));
     }
@@ -102,7 +99,7 @@ export class ResultsDataset extends React.Component {
   render() {
     const {
       datasetItems,
-      onClearSearch,
+      onClearFilters,
       onFilterTheme,
       onFilterAccessRights,
       onFilterPublisherHierarchy,
@@ -140,7 +137,7 @@ export class ResultsDataset extends React.Component {
           <div className="col-6 col-lg-4">
             <button
               className={clearButtonClass}
-              onClick={onClearSearch}
+              onClick={onClearFilters}
               type="button"
             >
               {localization.query.clear}
@@ -271,8 +268,8 @@ ResultsDataset.defaultProps = {
   themesItems: null,
   publisherArray: null,
   publishers: null,
-  distributionTypeItems: null,
-  onClearSearch: null,
+  referenceData: null,
+  onClearFilters: null,
   onPageChange: null,
   showClearFilterButton: null,
   hitsPerPage: null
@@ -291,8 +288,8 @@ ResultsDataset.propTypes = {
   themesItems: PropTypes.object,
   publisherArray: PropTypes.array,
   publishers: PropTypes.object,
-  distributionTypeItems: PropTypes.array,
-  onClearSearch: PropTypes.func,
+  referenceData: PropTypes.object,
+  onClearFilters: PropTypes.func,
   onSort: PropTypes.func.isRequired,
   onPageChange: PropTypes.func,
   showClearFilterButton: PropTypes.bool,

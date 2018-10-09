@@ -2,7 +2,7 @@ package no.dcat.harvester.crawler.handlers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import no.dcat.datastore.Elasticsearch;
+import no.dcat.client.elasticsearch5.Elasticsearch5Client;
 import no.dcat.datastore.domain.DcatSource;
 import no.dcat.datastore.domain.dcat.Publisher;
 import no.dcat.datastore.domain.dcat.builders.PublisherBuilder;
@@ -35,14 +35,12 @@ public class ElasticSearchResultPubHandler implements CrawlerResultHandler {
     public static final String PUBLISHER_TYPE = "publisher";
     private final Logger logger = LoggerFactory.getLogger(ElasticSearchResultPubHandler.class);
 
-    String hostname;
-    int port;
-    String clustername;
+    String clusterNodes;
+    String clusterName;
 
-    public ElasticSearchResultPubHandler(String hostname, int port, String clustername) {
-        this.hostname = hostname;
-        this.port = port;
-        this.clustername = clustername;
+    public ElasticSearchResultPubHandler(String clusterNodes, String clusterName) {
+        this.clusterNodes = clusterNodes;
+        this.clusterName = clusterName;
     }
 
     /**
@@ -56,7 +54,7 @@ public class ElasticSearchResultPubHandler implements CrawlerResultHandler {
     public void process(DcatSource dcatSource, Model model, List<String> validationResults) {
         logger.trace("Processing results Elasticsearch");
 
-        try (Elasticsearch elasticsearch = new Elasticsearch(hostname, port, clustername)) {
+        try (Elasticsearch5Client elasticsearch = new Elasticsearch5Client(clusterNodes, clusterName)) {
             logger.trace("Start indexing");
             indexWithElasticsearch(model, elasticsearch);
         } catch (Exception e) {
@@ -66,7 +64,7 @@ public class ElasticSearchResultPubHandler implements CrawlerResultHandler {
         logger.trace("finished");
     }
 
-    protected void indexWithElasticsearch(Model model, Elasticsearch elasticsearch) {
+    protected void indexWithElasticsearch(Model model, Elasticsearch5Client elasticsearch) {
         if (model != null && elasticsearch != null) {
             Gson gson = new GsonBuilder().setPrettyPrinting().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
 
@@ -90,7 +88,7 @@ public class ElasticSearchResultPubHandler implements CrawlerResultHandler {
         }
     }
 
-    public List<Publisher> getTopAgentsNotIndexed(Elasticsearch elasticsearch, List<Publisher> publishers, Gson gson) {
+    public List<Publisher> getTopAgentsNotIndexed(Elasticsearch5Client elasticsearch, List<Publisher> publishers, Gson gson) {
         List<Publisher> result = new ArrayList<>();
 
         String[] topDomains = {"STAT", "FYLKE", "KOMMUNE", "PRIVAT", "ANNET"};

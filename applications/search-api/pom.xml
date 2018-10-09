@@ -1,15 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>applications</artifactId>
-        <groupId>no.dcat</groupId>
-        <version>1.0</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>no.dcat</groupId>
     <artifactId>search-api</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.0</version>
+    <version>1.0.2</version>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.0.4.RELEASE</version>
+    </parent>
+
+    <properties>
+        <!--standard properties-->
+        <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.exec.skip>false</maven.exec.skip>
+        <!--end standard properties-->
+
+        <docker.image.prefix>dcatno</docker.image.prefix>
+        <docker.registry/>
+    </properties>
 
     <dependencies>
         <!-- må være med for å kjøre i intellij -->
@@ -26,10 +42,36 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Nødvendig for å bruke configserver på openshift -->
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-config</artifactId>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>2.19.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito2</artifactId>
+            <scope>test</scope>
+          <version>2.0.0-beta.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <scope>test</scope>
+            <version>2.0.0-beta.5</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20180813</version>
         </dependency>
 
         <!-- må ha actuator for å kjøre på openshift. kreves av readyness probe -->
@@ -42,15 +84,22 @@
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>no.dcat</groupId>
             <artifactId>datastore</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>no.dcat</groupId>
+            <artifactId>elasticsearch5-test</artifactId>
+            <scope>test</scope>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>no.dcat</groupId>
+            <artifactId>elasticsearch5-client</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <!-- 2.8 does not work at all. Same problem as 2.7 in 2.6, 2.5. Could't get 2.2.2 to work -->
@@ -70,22 +119,52 @@
             <artifactId>jsoup</artifactId>
             <version>1.10.3</version>
         </dependency>
+
+        <dependency>
+            <groupId>no.dcat</groupId>
+            <artifactId>webutils-spring</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.jena</groupId>
+            <artifactId>jena-core</artifactId>
+            <version>3.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.jena</groupId>
+            <artifactId>apache-jena-libs</artifactId>
+            <version>3.8.0</version>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>de.dentrassi.elasticsearch</groupId>
+            <artifactId>log4j2-mock</artifactId>
+            <version>0.0.1</version>
+        </dependency>
     </dependencies>
 
-    <!-- Nødvendig for å brukes på openshift-->
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Brixton.RELEASE</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <targetPath>${project.build.outputDirectory}</targetPath>
+                <excludes>
+                    <exclude>banner.txt</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <targetPath>${project.build.outputDirectory}</targetPath>
+                <includes>
+                    <include>banner.txt</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
         <plugins>
 
             <plugin>
@@ -96,20 +175,93 @@
                         <goals>
                             <goal>repackage</goal>
                         </goals>
+                        <configuration>
+                            <classifier>exec</classifier>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
 
-            <!-- skip this step by -DskipDockerBuild -->
+            <!-- Use -DskipDockerBuild to skip this rule -->
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
+                <version>1.1.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <imageName>
-                        ${docker.registry}${docker.image.prefix}/search-api:latest
+                        ${docker.registry}${docker.image.prefix}/${project.artifactId}:latest
                     </imageName>
+                    <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
+                    <pushImage>false</pushImage>
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}-exec.jar</include>
+                            <excludes>
+                                <exclude>target/**/*</exclude>
+                                <exclude>pom.xml</exclude>
+                                <exclude>*.iml</exclude>
+                            </excludes>
+                        </resource>
+                    </resources>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <!-- Unit test runner -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <configuration>
+                    <groups>no.dcat.shared.testcategories.UnitTest</groups> <!-- java.lang.Exception is a hack to make a valid comma-separated list og category classes -->
+                    <argLine>${surefireArgLine} -Dfile.encoding=${project.build.sourceEncoding}</argLine>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <!-- Generates coverage reports from unit and integration tests -->
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.1</version>
+                <executions>
+                    <!--
+                        JaCoCo report for unit tests
+                    -->
+                    <execution>
+                        <id>pre-unit-test</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
+                            <propertyName>surefireArgLine</propertyName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>post-unit-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
+                            <!-- Sets the output directory for the code coverage report for unit tests. -->
+                            <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+
 
         </plugins>
     </build>
