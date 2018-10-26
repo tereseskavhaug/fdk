@@ -1,0 +1,82 @@
+{
+  "apidocument": {
+    "properties": {
+      "harvestSourceUri": {
+        "type": "keyword"
+      },
+      "publisher": {
+        "properties": {
+          "name": {
+            "type": "text",
+            "fielddata": true,
+            "analyzer": "norwegian",
+            "fields": {
+              "raw": {
+                "type": "keyword"
+              }
+            }
+          },
+          "prefLabel": {
+            "properties": {
+              "no": {
+                "type": "text",
+                "fielddata": true,
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              }
+            }
+          },
+          "orgPath": {
+            "type": "text",
+            "fielddata": "true",
+            "analyzer": "path-analyzer"
+          }
+        }
+      },
+      "title": {
+        "analyzer": "norwegian",
+        "type": "text",
+        "fielddata": true,
+        "fields": {
+          "raw": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "description": {
+        "analyzer": "norwegian",
+        "type": "text"
+      },
+      "formats": {
+        "type": "keyword"
+      },
+      "openApi": {
+        "enabled": "false"
+      },
+      "nationalComponent": {
+        "type": "boolean"
+      },
+      "cost": {
+        "analyzer": "norwegian",
+        "type": "text"
+      },
+      "usageLimitation": {
+        "analyzer": "norwegian",
+        "type": "text"
+      },
+      "performance": {
+        "analyzer": "norwegian",
+        "type": "text"
+      },
+      "availability": {
+        "analyzer": "norwegian",
+        "type": "text"
+      }
+    }
+  }
+}

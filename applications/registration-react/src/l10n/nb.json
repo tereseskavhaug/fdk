@@ -1,10 +1,22 @@
 {
+  "title": "Tittel",
+  "description": "Beskrivelse",
+  "version": "Versjon",
+  "operations": "Operasjoner",
+  "operation": "Operasjon",
+  "license": "Lisens",
+  "termsOfService": "Bruksvilkår",
+  "contactInformation": "Kontaktinformasjon",
+  "yesterday": "i går",
+  "time": "kl.",
+  "at": "på",
   "listItems": {
     "header": {
       "title": "Tittel på datasett",
       "status": "Status"
     },
-    "missingItems": "Ingen datasettbeskrivelse registrert",
+    "missingDatasetItems": "Ingen datasettbeskrivelse registrert",
+    "missingApiItems": "Det er ikke registrert noen API-beskrivelser ennå.",
     "missingTitle": "Mangler tittel",
     "statusPublished": "Publisert",
     "statusDraft": "Utkast"
@@ -259,6 +271,15 @@
       "accessURLLabel": "Tilgangslenke",
       "formatLabel": "Format",
       "descriptionLabel": "Beskrivelse"
+    },
+    "apiMeta": {
+      "title": "Vilkår og begrensninger",
+      "helptext": {
+        "cost": "Pris",
+        "usageLimitation": "Trafikkbegrensninger",
+        "performance": "Kapasitet og ytelse",
+        "availability": "Pålitelighet"
+      }
     }
   },
   "inactiveSessionWarning": {
@@ -317,10 +338,10 @@
       "assignAccessText": "Du kan gi andre tilgang til å redigere datasett for din virksomhet via Altinn. Les mer om hvordan du gir andre tilgang."
     },
     "datasets": "Datasettkatalog",
-    "apiSpecs": "API-katalog",
+    "apis": "API-katalog",
     "type": {
       "datasets": "datasett",
-      "apiSpecs": "API-er"
+      "apis": "API-er"
     }
   },
   "loginDialog": {
@@ -328,5 +349,31 @@
     "ingress": "Her kan du registrere og administrere datasettbeskrivelser for din virksomhet. For å få tilgang må du være innlogget.",
     "loggedOutMsgPart1": "Du har blitt logget ut. ",
     "loggedOutMsgPart2": "Sesjonen ble tidsavbrutt, men vi har tatt vare på alle endringene du har gjort. Logg inn på nytt for å fortsette å jobbe med registreringen."
+  },
+  "api": {
+    "import": {
+      "cancel": "Avbryt",
+      "importApiSpec": "Importer API-spesifikasjon",
+      "importLink": "Importer via lenke",
+      "toImportLink": "importere via lenke",
+      "importFile": "Importer via fil",
+      "toImportFile": "importere via fil",
+      "importApiSpecFile": "Importer API-spesifikasjon via fil",
+      "importApiSpecFileError": "Noe gikk galt med importen. Kontroller at du har valgt riktig fil, eller prøv å ",
+      "filename": "Filnavn",
+      "importNewFile": "Importer ny fil",
+      "importApiSpecLink": "Importer API-spesifikasjon via lenke",
+      "importApiSpecLinkError": "Noe gikk galt med importen. Kontroller at URL-en er skrevet riktig, eller prøv å ",
+      "linkToSpec": "Lenke til spesifikasjon",
+      "import": "Importer"
+    },
+    "register": {
+      "apiCatalog": "API-katalog",
+      "registerNew": "Registrer ny API-beskrivelse",
+      "importFromSpecPart1": "Import fra",
+      "importFromSpecPart2": "var vellykket!",
+      "importFromSpec": "Importert fra spesifikasjon",
+      "addInfo": "For at API-beskrivelsen skal være nyttig for brukerne av Felles Datakatalog bør du legge til tilleggsinformasjon. Denne er spesifikk for Datakatalogen og vil kun brukes her."
+    }
   }
 }

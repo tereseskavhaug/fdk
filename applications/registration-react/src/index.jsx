@@ -7,12 +7,15 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { configureStore } from './redux/configureStore';
 import ProtectedRoute from './app-protected-route/app-protected-route.component';
 import { ConnectedFeatureToggleProvider } from './components/connected-feature-toggle-provider';
-import RegCatalogs from './pages/catalogs-page/catalogs-page';
+import { ConnectedCatalogsPage } from './pages/catalogs-page/connected-catalogs-page';
 import { ConnectedDatasetsListPage } from './pages/dataset-list-page/connected-dataset-list-page';
+import { ConnectedAPIListPage } from './pages/api-list-page/connected-api-list-page';
+import { ConnectedAPIRegistrationPage } from './pages/api-registration-page/connected-api-registration-page';
 import RegDataset from './pages/dataset-registration-page/dataset-registration-page';
 import Header from './components/app-header/app-header.component';
 import Footer from './components/app-footer/app-footer.component';
 import LoginDialog from './components/app-login-dialog/app-login-dialog.component';
+import { ConnectedApiImportPage } from './pages/api-import-page/connected-api-import-page';
 
 const store = configureStore();
 
@@ -24,7 +27,7 @@ const routes = (
       render={props => <LoginDialog {...props} loggedOut />}
     />
     <Route exact path="/loggin" render={props => <LoginDialog {...props} />} />
-    <ProtectedRoute exact path="/" component={RegCatalogs} />
+    <ProtectedRoute exact path="/" component={ConnectedCatalogsPage} />
     <ProtectedRoute
       exact
       path="/catalogs/:catalogId/datasets"
@@ -37,8 +40,18 @@ const routes = (
     />
     <ProtectedRoute
       exact
-      path="/catalogs/:catalogId/apiSpecs"
-      component={RegCatalogs}
+      path="/catalogs/:catalogId/apis"
+      component={ConnectedAPIListPage}
+    />
+    <ProtectedRoute
+      exact
+      path="/catalogs/:catalogId/apis/import"
+      component={ConnectedApiImportPage}
+    />
+    <ProtectedRoute
+      exact
+      path="/catalogs/:catalogId/apis/:id"
+      component={ConnectedAPIRegistrationPage}
     />
   </Switch>
 );

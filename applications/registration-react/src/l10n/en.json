@@ -1,10 +1,22 @@
 {
+  "title": "Title",
+  "description": "Description",
+  "version": "Version",
+  "operations": "Operations",
+  "operation": "Operation",
+  "license": "License",
+  "termsOfService": "Terms of use",
+  "contactInformation": "Contact information",
+  "yesterday": "yesterday",
+  "time": "at",
+  "at": "at",
   "listItems": {
     "header": {
       "title": "Dataset title",
       "status": "Status"
     },
-    "missingItems": "No dataset description registered",
+    "missingDatasetItems": "No dataset description registered",
+    "missingApiItems": "No api description registered.",
     "missingTitle": "Missing title",
     "statusPublished": "Published",
     "statusDraft": "Draft"
@@ -259,6 +271,15 @@
       "accessURLLabel": "Access URL",
       "formatLabel": "Format",
       "descriptionLabel": "Description"
+    },
+    "apiMeta": {
+      "termsOfUse": "Terms of use",
+      "helptext": {
+        "cost": "Cost",
+        "usageLimitation": "Usage limitations",
+        "performance": "Performance",
+        "availability": "Availability"
+      }
     }
   },
   "inactiveSessionWarning": {
@@ -317,10 +338,10 @@
       "assignAccessText": "You can grant other users access to edit datasets through Altinn. Read more on how to do this."
     },
     "datasets": "Datasettkatalog",
-    "apiSpecs": "API-katalog",
+    "apis": "API-katalog",
     "type": {
       "datasets": "datasett",
-      "apiSpecs": "API-er"
+      "apis": "API-er"
     }
   },
   "loginDialog": {
@@ -328,5 +349,31 @@
     "ingress": "Here you can register and administrate dataset descriptions for your business. To gain access make sure you are logged in",
     "loggedOutMsgPart1": "You have been logged out. ",
     "loggedOutMsgPart2": "Your session has timed out, but all your changes have been saved. Log in to continue working with registration."
+  },
+  "api": {
+    "import": {
+      "cancel": "Cancel",
+      "importApiSpec": "Import API specification",
+      "importLink": "Import from link",
+      "toImportLink": "import from link",
+      "importFile": "Import from file",
+      "toImportFile": "import from file",
+      "importApiSpecFile": "Import API specificaton from file",
+      "importApiSpecFileError": "Something went wrong. Please check file again, or try to ",
+      "filename": "Filename",
+      "importNewFile": "Import new file",
+      "importApiSpecLink": "Import API specification from link",
+      "importApiSpecLinkError": "Something went wrong. Please check if url is correct, or try to ",
+      "linkToSpec": "Link to specification",
+      "import": "Import"
+    },
+    "register": {
+      "apiCatalog": "API catalog",
+      "registerNew": "Register API description",
+      "importFromSpecPart1": "Import from",
+      "importFromSpecPart2": "was successful!",
+      "importFromSpec": "Importert fra spesifikasjon",
+      "addInfo": "To ensure API specification to be useful you are encouraged to add additional information. That information is only used in the National Data Directory"
+    }
   }
 }

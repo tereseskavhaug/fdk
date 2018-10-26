@@ -59,43 +59,11 @@ const renderApiEndpoints = (paths, apiSpecUrl, apiDocUrl) => {
   );
 };
 
-const renderAccessRights = accessRight => {
-  if (!accessRight) {
+const renderAPIInfo = ({ children }) => {
+  if (!children) {
     return null;
   }
-
-  const { code } = accessRight || {
-    code: null
-  };
-  let accessRightsLabel;
-
-  switch (code) {
-    case 'NON_PUBLIC':
-      accessRightsLabel = localization.api.accessRight.nonPublic;
-      break;
-    case 'RESTRICTED':
-      accessRightsLabel = localization.api.accessRight.restricted;
-      break;
-    case 'PUBLIC':
-      accessRightsLabel = localization.api.accessRight.public;
-      break;
-    default:
-      accessRightsLabel = localization.api.accessRight.unknown;
-  }
-
-  return <TwoColRow col1={localization.accessLevel} col2={accessRightsLabel} />;
-};
-
-const renderAPIInfo = accessRights => {
-  if (!accessRights) {
-    return null;
-  }
-
-  return (
-    <ListRegular title={localization.apiInfo}>
-      {renderAccessRights(accessRights[0])}
-    </ListRegular>
-  );
+  return <ListRegular title={localization.apiInfo}>{children}</ListRegular>;
 };
 
 const renderDatasetReference = (datasetReference, index) => {
@@ -177,6 +145,31 @@ const renderContactPoints = contactPoints => {
   );
 };
 
+const renderTermsAndRestrictions = termsAndRestrictions => {
+  if (!termsAndRestrictions) {
+    return null;
+  }
+  const children = items =>
+    items.map(
+      item =>
+        item[Object.keys(item)[0]] && ( // The item has a value, display the row
+          <TwoColRow
+            key={Object.keys(item)[0]}
+            col1={localization.api.termsAndRestrictions[Object.keys(item)[0]]}
+            col2={item[Object.keys(item)[0]]}
+          />
+        )
+    );
+
+  return (
+    <ListRegular
+      title={localization.api.termsAndRestrictions.termsAndRestrictions}
+    >
+      {children(termsAndRestrictions)}
+    </ListRegular>
+  );
+};
+
 const renderStickyMenu = apiItem => {
   const menuItems = [];
   if (_.get(apiItem, 'description')) {
@@ -252,7 +245,7 @@ export const ApiDetailsPage = props => {
               publisherLabel={localization.api.provider}
               publisher={_.get(apiItem, 'publisher')}
               publisherItems={publisherItems}
-              provenance={_.get(apiItem, 'provenance')}
+              nationalComponent={_.get(apiItem, 'nationalComponent')}
             />
           </div>
         </div>
@@ -271,7 +264,14 @@ export const ApiDetailsPage = props => {
               _.get(apiItem, 'apiDocUrl')
             )}
 
-            {renderAPIInfo(_.get(apiItem, ['accessRights']))}
+            {renderAPIInfo({})}
+
+            {renderTermsAndRestrictions([
+              { cost: _.get(apiItem, 'cost') },
+              { usageLimitation: _.get(apiItem, 'usageLimitation') },
+              { performance: _.get(apiItem, 'performance') },
+              { availability: _.get(apiItem, 'availability') }
+            ])}
 
             {renderDatasetReferences(_.get(apiItem, 'datasetReferences'))}
 

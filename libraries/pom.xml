@@ -15,8 +15,11 @@
         <module>datastore</module>
         <module>elasticsearch5-client</module>
         <module>elasticsearch5-test</module>
+        <module>html-cleaner</module>
         <module>referencedata-client</module>
         <module>webutils-spring</module>
+        <module>api-cat-client</module>
+        <module>registration-api-client</module>
     </modules>
 
 </project>

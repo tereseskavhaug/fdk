@@ -9,7 +9,7 @@ import './search-hit-item.scss';
 import { getTranslateText } from '../../../../lib/translateText';
 import { SearchHitHeader } from '../../../../components/search-hit-header/search-hit-header.component';
 
-const renderHeaderLink = (item, publisher, publishers, provenance) => {
+const renderHeaderLink = (item, publisher, publishers) => {
   if (!item) {
     return null;
   }
@@ -25,7 +25,7 @@ const renderHeaderLink = (item, publisher, publishers, provenance) => {
         publisherLabel={localization.api.provider}
         publisher={publisher}
         publisherItems={publishers}
-        provenance={provenance}
+        nationalComponent={item.nationalComponent}
       />
     </header>
   );
@@ -128,12 +128,7 @@ export const SearchHitItem = props => {
         Søketreff.
       </span>
 
-      {renderHeaderLink(
-        item,
-        _.get(item, 'publisher'),
-        publishers,
-        _.get(item, 'provenance')
-      )}
+      {renderHeaderLink(item, _.get(item, 'publisher'), publishers)}
 
       {renderExpiredVersion(_.get(item, 'expired'))}
 

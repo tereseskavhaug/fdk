@@ -1,6 +1,7 @@
+values_ut1.yaml
 target/
 **/*.iml
-.idea
+.idea/
 logs/
 /phantomjsdriver.log
 /test/*.zip

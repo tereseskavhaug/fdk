@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -22,7 +23,7 @@ export class DatasetDescription extends React.Component {
 
   render() {
     const { datasetItem } = this.props;
-    const { harvest, publisher, themes, provenance } = datasetItem || {};
+    const { harvest, publisher, theme, provenance } = datasetItem || {};
     let { title, descriptionFormatted, objective } = datasetItem || {};
     title = getTranslateText(title);
     descriptionFormatted = getTranslateText(descriptionFormatted);
@@ -38,8 +39,8 @@ export class DatasetDescription extends React.Component {
           title={title}
           publisherLabel={localization.search_hit.owned}
           publisher={publisher}
-          theme={themes}
-          provenance={provenance}
+          theme={theme}
+          nationalComponent={_.get(provenance, 'code') === 'NASJONAL'}
         />
 
         {descriptionFormatted && (

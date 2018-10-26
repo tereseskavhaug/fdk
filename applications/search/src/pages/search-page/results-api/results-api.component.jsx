@@ -11,23 +11,40 @@ import { Select } from '../../../components/select/select.component';
 import { FilterBox } from '../../../components/filter-box/filter-box.component';
 import { SearchPublishersTree } from '../search-publishers-tree/search-publishers-tree.component';
 
-const renderFilterModal = (
+const renderFilterModal = ({
   showFilterModal,
   closeFilterModal,
   apiItems,
-  onFilterAccessRights,
-  searchQuery
-) => (
+  searchQuery,
+  publisherArray,
+  publishers,
+  onFilterFormat,
+  onFilterPublisherHierarchy
+}) => (
   <Modal isOpen={showFilterModal} toggle={closeFilterModal}>
     <ModalHeader toggle={closeFilterModal}>{localization.filter}</ModalHeader>
     <ModalBody>
       <div className="search-filters">
+        {/* <FilterBox */}
+        {/* htmlKey={2} */}
+        {/* title={localization.facet.accessRight} */}
+        {/* filter={apiItems.aggregations.accessRights} */}
+        {/* onClick={onFilterAccessRights} */}
+        {/* activeFilter={searchQuery.accessrights} */}
+        {/* /> */}
+        <SearchPublishersTree
+          title={localization.facet.provider}
+          filter={publisherArray}
+          onFilterPublisherHierarchy={onFilterPublisherHierarchy}
+          activeFilter={searchQuery.orgPath}
+          publishers={publishers}
+        />
         <FilterBox
           htmlKey={2}
-          title={localization.facet.accessRight}
-          filter={apiItems.aggregations.accessRights}
-          onClick={onFilterAccessRights}
-          activeFilter={searchQuery.accessrights}
+          title={localization.facet.format}
+          filter={_.get(apiItems, ['aggregations', 'formats'])}
+          onClick={onFilterFormat}
+          activeFilter={searchQuery.format}
         />
       </div>
     </ModalBody>
@@ -129,20 +146,17 @@ export const ResultsApi = props => {
           </span>
           {_.get(apiItems, 'aggregations') && (
             <div>
-              {renderFilterModal(
+              {renderFilterModal({
                 showFilterModal,
                 closeFilterModal,
                 apiItems,
                 onFilterAccessRights,
-                searchQuery
-              )}
-              <FilterBox
-                htmlKey={1}
-                title={localization.facet.accessRight}
-                filter={_.get(apiItems, ['aggregations', 'accessRights'])}
-                onClick={onFilterAccessRights}
-                activeFilter={searchQuery.accessrights}
-              />
+                searchQuery,
+                publisherArray,
+                publishers,
+                onFilterFormat,
+                onFilterPublisherHierarchy
+              })}
               <SearchPublishersTree
                 title={localization.facet.provider}
                 filter={publisherArray}

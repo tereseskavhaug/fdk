@@ -4,6 +4,7 @@ import { fetchActions } from '../fetchActions';
 export const APIS_REQUEST = 'APIS_REQUEST';
 export const APIS_SUCCESS = 'APIS_SUCCESS';
 export const APIS_FAILURE = 'APIS_FAILURE';
+export const APIS_ADD_ITEM = 'APIS_ADD_ITEM';
 
 function shouldFetch(metaState) {
   const threshold = 60 * 1000; // seconds
@@ -18,13 +19,18 @@ export function fetchApisIfNeededAction(catalogId) {
   return (dispatch, getState) =>
     shouldFetch(_.get(getState(), ['apis', catalogId, 'meta'])) &&
     dispatch(
-      fetchActions(`/catalogs/${catalogId}/apiSpecs`, [
+      fetchActions(`/catalogs/${catalogId}/apis?size=1000`, [
         { type: APIS_REQUEST, meta: { catalogId } },
         { type: APIS_SUCCESS, meta: { catalogId } },
         { type: APIS_FAILURE, meta: { catalogId } }
       ])
     );
 }
+
+export const addApiItemAction = payload => ({
+  type: APIS_ADD_ITEM,
+  payload
+});
 
 const initialState = {};
 
@@ -44,7 +50,7 @@ export default function apis(state = initialState, action) {
       return {
         ...state,
         [action.meta.catalogId]: {
-          items: _.get(action.payload, ['_embedded', 'apiSpecs']),
+          items: _.get(action.payload, ['_embedded', 'apiRegistrations']),
           meta: {
             isFetching: false,
             lastFetch: Date.now()
@@ -61,6 +67,19 @@ export default function apis(state = initialState, action) {
           }
         }
       };
+    case APIS_ADD_ITEM:
+      return {
+        ...state,
+        [_.get(action.payload, 'catalogId')]: {
+          items: [
+            ..._.get(state, [_.get(action.payload, 'catalogId'), 'items'], []),
+            action.payload
+          ],
+          meta: {
+            ..._.get(state, [_.get(action.payload, 'catalogId'), 'meta'], [])
+          }
+        }
+      };
     default:
       return state;
   }
@@ -68,3 +87,6 @@ export default function apis(state = initialState, action) {
 
 export const getApiItemsByCatalogId = (apis, catalogId) =>
   _.get(apis, [catalogId, 'items']);
+
+export const getApiItemsByApiId = (apis, catalogId, id) =>
+  _.find(_.get(apis, [catalogId, 'items'], []), ['id', id]);

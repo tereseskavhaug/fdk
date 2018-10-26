@@ -133,7 +133,7 @@
     "relevance": "relevans",
     "title": "tittel A-Å",
     "publisher": "utgivar A-Å",
-    "modified": "sist endra"
+    "modified": "sist publisert"
   },
   "search_hit": {
     "owned": "Eigd av",
@@ -281,6 +281,13 @@
       "operations": "Operasjonar",
       "operation": "Operasjon",
       "description": "Skildring"
+    },
+    "termsAndRestrictions": {
+      "termsAndRestrictions": "Vilkår og avgrensingar",
+      "cost": "Pris",
+      "usageLimitation": "Trafikkavgrensning",
+      "performance": "Kapasitet og Ytelse",
+      "availability": "Pålitelegheit"
     },
     "provider": "Tilbydar:",
     "linkDatasetReference": "Lenke til datasettreferanse"

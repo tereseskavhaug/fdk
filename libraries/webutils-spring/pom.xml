@@ -19,24 +19,24 @@
 
     <groupId>no.dcat</groupId>
     <artifactId>webutils-spring</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-            <version>5.0.8.RELEASE</version>
+            <version>5.1.0.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.21</version>
+            <version>1.7.25</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
-            <version>5.0.8.RELEASE</version>
+            <version>5.1.0.RELEASE</version>
         </dependency>
     </dependencies>
 </project>
