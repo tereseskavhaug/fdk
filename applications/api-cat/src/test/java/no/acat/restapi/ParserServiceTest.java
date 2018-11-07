@@ -1,6 +1,8 @@
 package no.acat.restapi;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import no.acat.service.ParserService;
+import no.acat.utils.Utils;
 import no.dcat.openapi.OpenAPI;
 import no.dcat.shared.testcategories.UnitTest;
 import org.apache.commons.io.IOUtils;
@@ -44,4 +46,24 @@ public class ParserServiceTest {
         assertThat(openApi.getInfo().getTitle(), is("National API Directory Search API"));
     }
 
+    @Test
+    public void parse_swagger() throws Throwable {
+        ClassPathResource resource = new ClassPathResource("opplaeringsreg.json");
+
+        ParserService parserService = new ParserService();
+
+        String spec = IOUtils.toString(resource.getInputStream(), "UTF-8");
+
+        OpenAPI openApi = parserService.parse(spec);
+
+        ObjectMapper mapper = Utils.jsonMapper();
+
+        mapper.writeValueAsString(openApi);
+        assertThat(openApi.getInfo().getTitle(), is("Sindres nasjonale opplæringskontorregister API"));
+    }
+
 }
+//      mockMvc
+//          .perform(MockMvcRequestBuilders.get("/catalogs", String.class))
+//    .andExpect(content().string(containsString("/catalogs")));
+//    }
